@@ -9,6 +9,10 @@
 
 ---
 
+# NOTE
+- **This Project is now maintain under rslean-lib**
+- **This Project is a tool by rslearn-lib**
+
 ## ✨ Why rslearn?
 
 - ⚡ Minimal setup — no complex configuration  
