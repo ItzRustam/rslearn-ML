@@ -16,7 +16,7 @@ pip install rslearn-py
 
 ``` bash
 git clone https://github.com/ItzRustam/rslearn-ML.git
-cd rslearn
+cd rslearn-ML
 ```
 
 - Using GitHub Release For Explained Stable Newer Version
