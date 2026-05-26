@@ -149,7 +149,7 @@ rslearn/
 
 ```bash
 git clone https://github.com/ItzRustam/rslearn-ML.git
-cd rslearn
+cd rslearn-ML/
 ```
 
 ### Install Usable Library (Stable - Latest)
