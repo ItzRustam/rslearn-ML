@@ -10,9 +10,11 @@
 *.pyc
 tests/
 dist/*
-rslearn_ML.egg-info/*
+rslearn_ml.egg-info/*
 .vscode/*
 
 goal.md
 testing.py
 .venv/*
+*.egg-info
+.vscode

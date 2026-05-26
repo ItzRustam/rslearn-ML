@@ -20,8 +20,8 @@
 ---
 
 ## Release & Changes
-* **Version : 1.0.7 - 1.0.6**
-* **Release Date: 2026-05-03**
+* **Version : 1.0.7 - 1.0.1**
+* **Release Date: 2026-05-26**
 
 ## 🚀 Features
 
@@ -148,13 +148,13 @@ rslearn/
 ### Clone the repository
 
 ```bash
-git clone https://github.com/Rustam-Singh-Bhadouriya/rslearn-ML.git
+git clone https://github.com/ItzRustam/rslearn-ML.git
 cd rslearn
 ```
 
 ### Install Usable Library (Stable - Latest)
 ``` bash
-pip install rslearn-ML
+pip install rslearn-py
 ```
 ## Download Version Specific Module
 ***[Downloads Older Library](download.md)***
@@ -212,7 +212,7 @@ print(model.predict([40]))
 
 ## 🧑‍💻 Author
 
-**Rustam Singh Bhadouriya**
+**ItzRustam**
 
 ---
 
