@@ -214,9 +214,6 @@ class pipeline:
                 raise AttributeError("""Invalid Attribute `X` or `y`
                                      Note: Check X or y not to be None""")
             
-            if self.scaling:
-                X = self.Scaler.fit_transform(X)
-            
             
             X_train, X_test, y_train, y_test = self._helper(X=X, y=y, split_params=self.split_params, split=self.split)
             
@@ -225,7 +222,7 @@ class pipeline:
             if self.split:
                 y_test = y_test.reshape(-1)
 
-            self.Model.fit(X_train, y_train, scale=not(self.scaling), verbose=False, min_loss=0.1)
+            self.Model.fit(X_train, y_train, scale=self.scaling, verbose=False, min_loss=0.1)
             self.trained=True
 
             if self.split:

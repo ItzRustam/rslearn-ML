@@ -34,7 +34,6 @@ Scalers...
 Read READNE.md or Documentation for More Information about their Functions
 """
 
-import numpy as np
 from rslearn.BaseEstimators import _base
 from rslearn.preprocessing import StandardScaler
 from rslearn.metrics import (
@@ -43,6 +42,7 @@ from rslearn.metrics import (
                             rmse,
                             mae
                             )
+import numpy as np
 
 
 class LinearRegression():
@@ -168,6 +168,10 @@ class LinearRegression():
         if scale:
             X = self.Scaler.fit_transform(X)
             self.flag = True
+        else:
+            X = X/max(X)
+            self.maxx = max(X)
+        
 
         
         n_samples, n_feature = X.shape
@@ -239,6 +243,8 @@ class LinearRegression():
 
         if self.flag:
             new_data = self.Scaler.transform(new_data)
+        else:
+            new_data = new_data/self.maxx # Stability
         
 
         return (np.dot(new_data, self.weights) + self.bias).round()

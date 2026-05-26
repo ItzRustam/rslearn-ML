@@ -1,12 +1,12 @@
 [project]
-name = "rslearn-ML"
-version = "1.0.6"
-description = "A simple sklearn-like ML library built from scratch"
+name = "rslearn-py"
+version = "1.0.1"
+description = "A simple sklearn-like ML library built from scratch, Relaunch For rslearn-ML"
 authors = [
-    { name="Rustam Singh Bhadouriya", email="rustambhadouriya7@gmail.com" }
+    { name="ItzRustam", email="rustambhadouriya7@gmail.com" }
 ]
 readme = "README.md"
-license = { text = "MIT" }
+license = { text = "GNU General Public License v3 (GPLv3)" }
 requires-python = ">=3.10"
 
 dependencies = [

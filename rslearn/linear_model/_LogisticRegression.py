@@ -146,6 +146,9 @@ class LogisticRegression:
         if scale:
             X = self.Scaler.fit_transform(X)
             self.flag = True
+        else:
+            X = X/max(X)
+            self.maxx = max(X) # Gradient Stability
 
         self.fitted_shape=X.shape
 
@@ -198,6 +201,10 @@ class LogisticRegression:
         # Scaling If Available
         if self.flag:
             X = self.Scaler.transform(X)
+
+        # else Gradient Stability opration
+        else:
+            X = X/max(X)
         
 
         probs = self.predict_proba(X)
