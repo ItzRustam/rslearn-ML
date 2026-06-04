@@ -207,6 +207,9 @@ def cm_helper(cm):
     FN = np.sum(cm, axis=1) - TP
     TN = total - (TP + FP + FN)
 
+    # if len(TP) == 2:
+    #     return TP[0], FP[0], FN[0], TN[0]
+
     return TP, FP, FN, TN
 
 
@@ -248,7 +251,10 @@ def precision(y_true, y_pred):
     cm = confusion_metrics(y_true, y_pred)
     TP, FP, _, _ = cm_helper(cm)
 
-    return TP / (TP + FP)
+    output = TP / (TP + FP)
+    output = np.nan_to_num(output, nan=0.0, posinf=0.0, neginf=0.0)
+
+    return output 
 
 def recall(y_true, y_pred):
     """
@@ -288,7 +294,10 @@ def recall(y_true, y_pred):
     cm = confusion_metrics(y_true, y_pred)
     TP, _ , FN, _ = cm_helper(cm)
 
-    return TP / (TP + FN)
+    output = TP / (TP + FN)
+    output = np.nan_to_num(output, nan=0.0, posinf=0.0, neginf=0.0)
+
+    return output 
 
 def f1_score(y_true, y_pred):
 
@@ -329,5 +338,7 @@ def f1_score(y_true, y_pred):
 
     p = precision(y_true, y_pred)
     r = recall(y_true, y_pred)
+    output = 2 * (p * r) / (p + r + 1e-9);
 
-    return 2 * (p * r) / (p + r + 1e-9)
+    output = np.nan_to_num(output, nan=0.0, posinf=0.0, neginf=0.0)
+    return output 

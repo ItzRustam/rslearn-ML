@@ -222,7 +222,7 @@ class pipeline:
             if self.split:
                 y_test = y_test.reshape(-1)
 
-            self.Model.fit(X_train, y_train, scale=self.scaling, verbose=False, min_loss=0.1)
+            self.Model.fit(X_train, y_train, scale=self.scaling)
             self.trained=True
 
             if self.split:

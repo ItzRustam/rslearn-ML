@@ -270,9 +270,9 @@ class LogisticRegression:
 
         evaluations = { # Storing in Dict
             "accuracy_score": float(accuracy),
-            "f1_score": float(F1),
-            "recall": float(Recall),
-            "precision": float(Precision)
+            "f1_score": F1,
+            "recall": Recall,
+            "precision": Precision
         }
 
         # Returning `prediction` and `Evaluation` for future Flask/FastAPI support

@@ -1,13 +1,13 @@
 [project]
 name = "rslearn-py"
-version = "1.0.1"
+version = "1.0.2"
 description = "A simple sklearn-like ML library built from scratch, Relaunch For rslearn-ML"
 authors = [
     { name="ItzRustam", email="rustambhadouriya7@gmail.com" }
 ]
 readme = "README.md"
 license = { text = "GNU General Public License v3 (GPLv3)" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 dependencies = [
     "numpy"

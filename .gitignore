@@ -18,3 +18,10 @@ testing.py
 .venv/*
 *.egg-info
 .vscode
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
