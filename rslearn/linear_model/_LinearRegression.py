@@ -124,9 +124,9 @@ class LinearRegression():
             weights= None,
             bias = None,
             learning_rate : float = 0.001,
-            min_loss : float = 0.2,
+            min_loss : float = 0.1,
             max_itr : int = 18000,
-            verbose : bool = True,
+            verbose : bool = False,
             scale : bool = True
             ):
         """

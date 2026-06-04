@@ -3,15 +3,23 @@
 > A beginner-friendly machine learning library that automates preprocessing, training, and evaluation.
 
 ![License](https://img.shields.io/badge/license-GPLv3-blue.svg)
-![Python](https://img.shields.io/badge/python-3.13.x-blue.svg)
+![Python](https://img.shields.io/badge/python-3.11.x-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 
 ---
 
-# NOTE
-- **This Project is now maintain under rslean-lib**
-- **This Project is a tool by rslearn-lib**
+## NOTE
+**This is Python version of this library visit more.**
+
+* <a href="https://github.com/rslearn-lib/rslearn-ML-cpp">C++ Version</a>
+
+Origination - **<a href="https://github.com/rslearn-lib">rslearn-lib</a>**
+
+* <a href="https://rslearn-py.rslearnlib.workers.dev">rslearn-ML</a>
+* <a href="https://rslearn-lib.rslearnlib.workers.dev">rslearn-lib</a>
+
+---
 
 ## ✨ Why rslearn?
 
@@ -24,10 +32,10 @@
 ---
 
 ## Release & Changes
-* **Version : 1.0.7 - 1.0.1**
-* **Release Date: 2026-05-26**
+* **Version : 1.0.7 - 1.0.2**
+* **Release Date: 2026-06-04**
 
-## 🚀 Features
+## 
 
 ### Latest (In Pipeline & linear_model): 
 * `Pipeline With Inbuilt Analysis Method With Regulizations class support`
@@ -38,17 +46,11 @@ More Parameter Info (in Pipeline): [README](rslearn/Pipeline/README.md)
 More Parameter Info (in linear_models): [README](rslearn/linear_model/README.md)
 Read Doc Strings For Extra Information About Parameter
 
-### Fix
-* Shape varification issue in `linear_model`
-* Auto Scaler Problem
+### ⚠️ Immediate Fix
+* Classificaiton Metrics Evaluation Breakage
+* Pipeline Invalid Arg Fix
+* Wrong URLs
 
-### Changed
-* MIT License to GNU GPL v3
-* `analysis()` to `evaluate()` in Pipeline
-
-## 🗄️ New File & Folders
-* **Folder: Pipeline**
-* **File: Pipeline/_pipeline.py**
 
 ## Download Version Specific Module
 ***[Downloads - Module](download.md)***
@@ -152,8 +154,8 @@ rslearn/
 ### Clone the repository
 
 ```bash
-git clone https://github.com/ItzRustam/rslearn-ML.git
-cd rslearn-ML/
+git clone https://github.com/rslearn-lib/rslearn-ML-py.git
+cd rslearn-ML-py/
 ```
 
 ### Install Usable Library (Stable - Latest)
@@ -217,6 +219,9 @@ print(model.predict([40]))
 ## 🧑‍💻 Author
 
 **ItzRustam**
+
+## 🔨 Origination
+**rslearn-lib**
 
 ---
 
