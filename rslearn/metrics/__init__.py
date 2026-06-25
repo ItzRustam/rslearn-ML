@@ -21,5 +21,6 @@ from ._classification import (accuracy_score,
                               recall,
                               precision,
                               f1_score)
+from ._distances import EuclidienDisctance
 
-__all__ = ["r2_score", "mse", "mae", "rmse", "accuracy_score", "confusion_metrics", "precision", "recall", "f1_score"]
+__all__ = ["r2_score", "mse", "mae", "rmse", "accuracy_score", "confusion_metrics", "precision", "recall", "f1_score", "EuclidienDisctance"]
