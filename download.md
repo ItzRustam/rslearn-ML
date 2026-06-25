@@ -15,7 +15,7 @@ pip install --upgrade rslearn-py
 *Dependencies*  - git  
 
 ``` bash
-git clone https://github.com/rslearn-lib/rslearn-ML-py-py.git
+git clone https://github.com/rslearn-lib/rslearn-ML-py.git
 cd rslearn-ML-py
 ```
 
