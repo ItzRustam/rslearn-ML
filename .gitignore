@@ -25,3 +25,8 @@ testing.py
 !.dev.vars.example
 .env*
 !.env.example
+
+
+# temps
+knnC.py
+knnR.py
