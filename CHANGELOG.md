@@ -4,18 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [1.0.7 - v1.0.2] - 2026-06-04
+## [1.0.8 - v1.0.2] - 2026-06-25
 
-### FIX
-* Precision, Recall, f1_score NaN problem
-* Invalid Args in Pipeline
+### Feature
+* KNN Regressor & KNN Classification Both
+* Evaluation and auto scale builtin
 
-### Improvement
-* Insured Stability
-* Updated how_to_use.py with new features
 
 ### Tested
-* This is Testing well and Still testing
+* Tested on iris & California Hoursing Dataset
+
+### Note
+* Documantation is not created, **Documantation** & **Doc String** will be updated in next versions.
 
 
 ### Notes
@@ -23,10 +23,8 @@ All notable changes to this project will be documented in this file.
 
 
 ### File Changed
-* Pipeline/_pipeline.py
-* metrics/_classification.py
-* linear_model/*
+* metrics/_distance.py
+* rslearn/Error/_error.py
+* rslearn/neighbors
 * CHANGELOG.md
-* download.md
 * README.md
-* how_to_use.py

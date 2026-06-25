@@ -32,24 +32,16 @@ Origination - **<a href="https://github.com/rslearn-lib">rslearn-lib</a>**
 ---
 
 ## Release & Changes
-* **Version : 1.0.7 - 1.0.2**
-* **Release Date: 2026-06-04**
+* **Version : 1.0.8 - 1.0.2**
+* **Release Date: 2026-06-25**
 
 ## 
 
 ### Latest (In Pipeline & linear_model): 
-* `Pipeline With Inbuilt Analysis Method With Regulizations class support`
-* `evaluation() Function Support in All Classes`
+* `KNN Regression & Classification Both`
+* `Evaluation & auto scaling support`
 
 More Info: [CHANGELOG](CHANGELOG.md)  
-More Parameter Info (in Pipeline): [README](rslearn/Pipeline/README.md)  
-More Parameter Info (in linear_models): [README](rslearn/linear_model/README.md)
-Read Doc Strings For Extra Information About Parameter
-
-### ⚠️ Immediate Fix
-* Classificaiton Metrics Evaluation Breakage
-* Pipeline Invalid Arg Fix
-* Wrong URLs
 
 
 ## Download Version Specific Module

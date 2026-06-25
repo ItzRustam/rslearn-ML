@@ -12,6 +12,6 @@
 #
 # See the LICENSE file for more details.
 
-from . import linear_model, metrics, preprocessing, model_selection, Pipeline
+from . import linear_model, metrics, preprocessing, model_selection, Pipeline, neighbors
 
-__all__ = ["linear_model", "metrics", "preprocessing", "model_selection", "Pipeline"]
+__all__ = ["linear_model", "metrics", "preprocessing", "model_selection", "Pipeline", "neighbors"]
