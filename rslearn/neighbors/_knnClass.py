@@ -28,6 +28,26 @@ from rslearn.BaseEstimators import _base
 
 class KNNClassifier:
     def __init__(self, k_neighbors=5):
+        """
+        KNNClassifier Class
+
+        A K-Nearest Neighbors classifier for classification tasks. This implementation supports optional data scaling 
+        and provides methods to fit the model, generate predictions, and evaluate performance.
+
+        Parameters:  
+            k_neighbors: int  
+                Number of neighbors to consider for classification, default = 5  
+ 
+        Methods:  
+            fit(X, y, scale=True)
+                Fit the model using X and target y. Can optionally perform scaling of features.
+ 
+            predict(X_new)  
+                Generate predictions for new input data X_new based on fitted model.
+
+            evaluate(X=None, y_pred=None, y_true=None)
+                Evaluate model performance using various classification metrics.
+        """
         self.k = k_neighbors
         self.Scaler = StandardScaler() # Scaler
         self.flag = False # Flag For Scaler Status
@@ -38,6 +58,17 @@ class KNNClassifier:
         self.fitted_y = None
     
     def fit(self, X, y, scale=True):
+        """
+        Fit the model using the provided training data.
+
+        Parameters:
+            X: array-like of shape (n_samples, n_features)
+                Training data.
+            y: array-like of shape (n_samples,)
+                Target values for each sample during training.
+            scale: bool, default=True
+                Whether to perform scaling on the input features before fitting.
+        """
         X = np.asarray(X)
         y = np.asarray(y)
 
@@ -61,7 +92,13 @@ class KNNClassifier:
         self._fitted = True
     
     def predict(self, X_new):
+        """
+        Generate predictions for new input data using the fitted model.
 
+        Parameters:
+            X_new: array-like of shape (n_samples, n_features)
+                Input data to make predictions on.
+        """
         
         if not(self._fitted):
             raise NotFittedError("Not has not been fitted yet.")
@@ -105,19 +142,16 @@ class KNNClassifier:
     ):
         
         """
-        `analysis` Method
+        Evaluate model performance using various classification metrics.
 
-        Function to Evaluate All suitable Metrics Algorithams and print Them 
-
-        Parameters
-        ----------
-        y_pred: predictions from Model
-
-        y_true: Correct Values to Evaluate
-
-        Returns
-        -------
-        None
+        Parameters:
+            X: array-like of shape (n_samples, n_features), default=None
+                Input data to evaluate predictions on. If provided, model will generate
+                predictions and use them for evaluation.
+            y_pred: array-like of shape (n_samples,), default=None
+                Predictions to use for evaluation. Only one of X or y_pred should be provided.
+            y_true: array-like of shape (n_samples,), default=None
+                True target values for evaluation.
         """
 
 
