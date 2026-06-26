@@ -30,3 +30,5 @@ testing.py
 # temps
 knnC.py
 knnR.py
+
+.continue/

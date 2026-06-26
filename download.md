@@ -5,9 +5,14 @@
 
 ## Module Download
 
-Module is re uploaded so latest version is 1.0.2
+latest - 1.0.3 Install/Update  
 ``` bash
 pip install --upgrade rslearn-py
+```
+
+- 1.0.2
+``` bash
+pip install rslearn-py==1.0.2
 ```
 
 - Using CLI
