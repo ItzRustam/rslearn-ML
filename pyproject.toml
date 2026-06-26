@@ -1,18 +1,43 @@
 [project]
 name = "rslearn-py"
-version = "1.0.2"
-description = "A simple sklearn-like ML library built from scratch, Relaunch For rslearn-ML"
-authors = [
-    { name="ItzRustam", email="rustambhadouriya7@gmail.com" }
-]
+version = "1.0.3"
+description = "A simple sklearn-like ML library built from scratch"
 readme = "README.md"
-license = { text = "GNU General Public License v3 (GPLv3)" }
+authors = [
+    { name = "ItzRustam", email = "rustambhadouriya7@gmail.com" }
+]
+license = { text = "GPL-3.0-only" }
 requires-python = ">=3.11"
 
 dependencies = [
     "numpy"
 ]
 
+[project.urls]
+Homepage = "https://github.com/rslearn-lib/rslearn-ML-py"
+
+# ---------------------------
+# BUILD SYSTEM
+# ---------------------------
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
+
+# ---------------------------
+# SETUPTOOLS CONFIG
+# ---------------------------
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["rslearn*"]
+exclude = ["tests*"]
+
+# ---------------------------
+# OPTIONAL (nice for later CLI tools)
+# ---------------------------
+
+# [project.scripts]
+# rslearn = "rslearn.cli:main"
