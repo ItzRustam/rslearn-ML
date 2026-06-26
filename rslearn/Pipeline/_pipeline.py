@@ -286,20 +286,16 @@ class pipeline:
     ):
         
         """
-        `evaluate` Method
+        Evaluate model performance using various classification metrics.
 
-        Function to Evaluate All suitable Metrics Algorithams and print Them 
-
-        Parameters
-        ----------
-        y_pred: predictions from Model
-
-        y_true: Correct Values to Evaluate
-
-        Returns
-        -------
-        Dict - dictonary of `predictions` & `Evaluations` on that  
-            Keys: `prediction`, `evaluation`  
+        Parameters:
+            X: array-like of shape (n_samples, n_features), default=None
+                Input data to evaluate predictions on. If provided, model will generate
+                predictions and use them for evaluation.
+            y_pred: array-like of shape (n_samples,), default=None
+                Predictions to use for evaluation. Only one of X or y_pred should be provided.
+            y_true: array-like of shape (n_samples,), default=None
+                True target values for evaluation.
         """
 
         if not self.trained:
