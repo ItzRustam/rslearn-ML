@@ -9,13 +9,11 @@ All notable changes to this project will be documented in this file.
 ### Feature
 * KNN Regressor & KNN Classification Both
 * Evaluation and auto scale builtin
+* Documantation & Doc String
 
 
 ### Tested
 * Tested on iris & California Hoursing Dataset
-
-### Note
-* Documantation is not created, **Documantation** & **Doc String** will be updated in next versions.
 
 
 ### Notes
@@ -25,6 +23,6 @@ All notable changes to this project will be documented in this file.
 ### File Changed
 * metrics/_distance.py
 * rslearn/Error/_error.py
-* rslearn/neighbors
+* rslearn/neighbors/*
 * CHANGELOG.md
 * README.md
