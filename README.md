@@ -115,48 +115,60 @@ scale=True  # default
 
 ## 📁 Project Structure
 
-```text
-rslearn/
+```text id="rslrn1"
+project-root/
 │
-├── BaseEstimators/
-│   └── _base.py
+├── rslearn/
+│   │
+│   ├── BaseEstimators/
+│   │   └── _base.py
+│   │
+│   ├── Errors/
+│   │   ├── __init__.py
+│   │   └── _errors.py
+│   │
+│   ├── linear_model/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   ├── _LinearRegression.py
+│   │   ├── _LogisticRegression.py
+│   │   └── _regulizations.py
+│   │
+│   ├── metrics/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   ├── classification_readme.md
+│   │   ├── _classification.py
+│   │   ├── _distances.py
+│   │   └── _regression.py
+│   │
+│   ├── model_selection/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   └── _split.py
+│   │
+│   ├── neighbors/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   ├── _knnClass.py
+│   │   └── _knnReg.py
+│   │
+│   ├── Pipeline/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   └── _pipeline.py
+│   │
+│   ├── preprocessing/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   └── _scaler.py
+│   │
+│   └── __init__.py
 │
-├── Errors/
-│   ├── __init__.py
-│   └── _errors.py
-│
-├── linear_model/
-│   ├── __init__.py
-│   ├── _LinearRegression.py
-│   ├── _LogisticRegression.py
-│   └── _regulizations.py
-│
-├── metrics/
-│   ├── __init__.py
-│   ├── _classification.py
-│   ├── _distances.py
-│   └── _regression.py
-│
-├── model_selection/
-│   ├── __init__.py
-│   ├── _cvs.py
-│   └── _split.py
-│
-├── neighbors/
-│   ├── __init__.py
-│   ├── _knnClass.py
-│   └── _knnReg.py
-│
-├── Pipeline/
-│   ├── __init__.py
-│   └── _pipeline.py
-│
-├── preprocessing/
-│   ├── __init__.py
-│   └── _scaler.py
-│
-└── __init__.py
+├── README.md
+
 ```
+
 
 
 📌 Each module contains its own **detailed README** with usage examples and explanations.
