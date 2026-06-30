@@ -115,27 +115,49 @@ scale=True  # default
 
 ## 📁 Project Structure
 
-```
+```text
 rslearn/
 │
-├── linear_model/
-│   ├── _linear_regression.py
-│   ├── _logistic_regression.py
-│   ├── _ridge.py
-│   ├── _lasso.py
-│   ├── _elastic_net.py
+├── BaseEstimators/
+│   └── _base.py
 │
-├── preprocessing/
-│   ├── _scaler.py
+├── Errors/
+│   ├── __init__.py
+│   └── _errors.py
+│
+├── linear_model/
+│   ├── __init__.py
+│   ├── _LinearRegression.py
+│   ├── _LogisticRegression.py
+│   └── _regulizations.py
 │
 ├── metrics/
-│   ├── _regression.py
+│   ├── __init__.py
+│   ├── _classification.py
+│   ├── _distances.py
+│   └── _regression.py
 │
 ├── model_selection/
-│   ├── _split.py
+│   ├── __init__.py
+│   ├── _cvs.py
+│   └── _split.py
 │
-└── README.md
+├── neighbors/
+│   ├── __init__.py
+│   ├── _knnClass.py
+│   └── _knnReg.py
+│
+├── Pipeline/
+│   ├── __init__.py
+│   └── _pipeline.py
+│
+├── preprocessing/
+│   ├── __init__.py
+│   └── _scaler.py
+│
+└── __init__.py
 ```
+
 
 📌 Each module contains its own **detailed README** with usage examples and explanations.
 
