@@ -116,7 +116,7 @@ scale=True  # default
 ## 📁 Project Structure
 
 ```text id="rslrn1"
-project-root/
+rslearn-ML/
 │
 ├── rslearn/
 │   │
