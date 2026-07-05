@@ -115,27 +115,61 @@ scale=True  # default
 
 ## 📁 Project Structure
 
+```text id="rslrn1"
+rslearn-ML/
+│
+├── rslearn/
+│   │
+│   ├── BaseEstimators/
+│   │   └── _base.py
+│   │
+│   ├── Errors/
+│   │   ├── __init__.py
+│   │   └── _errors.py
+│   │
+│   ├── linear_model/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   ├── _LinearRegression.py
+│   │   ├── _LogisticRegression.py
+│   │   └── _regulizations.py
+│   │
+│   ├── metrics/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   ├── classification_readme.md
+│   │   ├── _classification.py
+│   │   ├── _distances.py
+│   │   └── _regression.py
+│   │
+│   ├── model_selection/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   └── _split.py
+│   │
+│   ├── neighbors/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   ├── _knnClass.py
+│   │   └── _knnReg.py
+│   │
+│   ├── Pipeline/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   └── _pipeline.py
+│   │
+│   ├── preprocessing/
+│   │   ├── __init__.py
+│   │   ├── README.md
+│   │   └── _scaler.py
+│   │
+│   └── __init__.py
+│
+├── README.md
+
 ```
-rslearn/
-│
-├── linear_model/
-│   ├── _linear_regression.py
-│   ├── _logistic_regression.py
-│   ├── _ridge.py
-│   ├── _lasso.py
-│   ├── _elastic_net.py
-│
-├── preprocessing/
-│   ├── _scaler.py
-│
-├── metrics/
-│   ├── _regression.py
-│
-├── model_selection/
-│   ├── _split.py
-│
-└── README.md
-```
+
+
 
 📌 Each module contains its own **detailed README** with usage examples and explanations.
 
