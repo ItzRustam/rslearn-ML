@@ -203,17 +203,13 @@ pip install -r requirements.txt
 
 ```python
 from rslearn.linear_model import LinearRegression
-from rslearn.preprocessing import StandardScaler
 import numpy as np
 
 X = np.array([10, 20, 30])
 y = np.array([5, 10, 15])
 
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
 model = LinearRegression()
-model.fit(X_scaled, y)
+model.fit(X, y, scale=True) # Auto Scale if True, else Gradient Stability Backend
 
 print(model.predict([40]))
 ```
