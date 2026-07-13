@@ -1,4 +1,3 @@
-from ._estimator import BaseEstimator
-from ._base import backupScaler
+from ._estimator import BaseEstimator, backupScaler
 
 __all__ = ['BaseEstimator', 'backupScaler']

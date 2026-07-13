@@ -32,28 +32,6 @@ def check_multioutput(parameter) -> None:
 
     return
 
-"""Secodary Scaler"""
-class backupScaler:
-    def __init__(self, epsilon=1e-9):
-        self.__max = 0
-        self.__epsilon = epsilon
-        self.__fitted = False
-    
-    def fit(self, X):
-        self.__max = np.max(X)
-        self.__fitted = True
-    
-    def transform(self, X):
-        if self.__fitted:
-            new_X = X/(self.__max + self.__fitted) # avoid devisible by 0
-            return new_X
-        else:
-            raise NotFittedError("Scaler has not been fitted yet.")
-    
-    def fit_transform(self, X):
-        self.fit(X=X) # Fitting
-        scaled = self.transform(X=X)
-        return scaled
 
     
 

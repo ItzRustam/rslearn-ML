@@ -1,11 +1,32 @@
 import numpy as np
 from rslearn.preprocessing import StandardScaler
-from rslearn.BaseEstimators import backupScaler # X/(max(X) + 1e-9)
 from rslearn.BaseEstimators import _base
 from abc import ABC, abstractmethod
 from rslearn.Errors import *
 from rslearn.metrics import *
 
+"""Secodary Scaler"""
+class backupScaler:
+    def __init__(self, epsilon=1e-9):
+        self.__max = 0
+        self.__epsilon = epsilon
+        self.__fitted = False
+    
+    def fit(self, X):
+        self.__max = np.max(X)
+        self.__fitted = True
+    
+    def transform(self, X):
+        if self.__fitted:
+            new_X = X/(self.__max + self.__fitted) # avoid devisible by 0
+            return new_X
+        else:
+            raise NotFittedError("Scaler has not been fitted yet.")
+    
+    def fit_transform(self, X):
+        self.fit(X=X) # Fitting
+        scaled = self.transform(X=X)
+        return scaled
 
 
 # Task - Complete This Class.
@@ -78,7 +99,7 @@ class BaseEstimator(ABC):
         RMSE = rmse(y_true=y_true, y_pred=y_pred)
 
         evaluations = { # Storing in Dict
-            "r2_score": r2_Score,
+            "r2_score": float(r2_Score),
             "mse": float(MSE),
             "mae": float(MAE),
             "rmse": float(RMSE)
@@ -144,9 +165,17 @@ class BaseEstimator(ABC):
             return self._eval_help_classification(X=X, y_pred=y_pred, y_true=y_true)
         else:
             raise Error(f"Invalid Class type `{self.type}`")
-        
-
-
-
-
     
+    def get_weight_bias(self) -> tuple:
+        """Input = None, 
+        O/P - (np.array, float64)
+        >>> weights, bias = Model.get_weight_bias()
+        """
+        return (self.weights, self.bias)
+
+
+
+
+if __name__ == '__main__':
+    bs = BaseEstimator()
+    bs._eval()
