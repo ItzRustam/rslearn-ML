@@ -48,6 +48,10 @@ class KNNClassifier:
             evaluate(X=None, y_pred=None, y_true=None)
                 Evaluate model performance using various classification metrics.
         """
+
+        if k_neighbors <= 0:
+            raise InvalidValueError("k_neighbors can't be smaller than 1")
+
         self.k = k_neighbors
         self.Scaler = StandardScaler() # Scaler
         self.flag = False # Flag For Scaler Status
@@ -156,17 +160,17 @@ class KNNClassifier:
 
 
         if not self._fitted: # If Model is not fitted
-            raise RuntimeError(
+            raise NotFittedError(
                 "This model is not trained yet. Call 'fit()' before using 'evaluate()'."
             )
 
         if y_true is None: # Edge case : Nothing to compare
-            raise ValueError("Invalid Arguments `y_true` `None`")
+            raise InvalidValueError("Invalid Arguments `y_true` `None`")
         
         
         if y_pred is None:
             if X is None: # Edge case: Both `X` and `y_pred` are None
-                raise ValueError("parameter `X` and `y_pred` Both given None.")
+                raise InvalidValueError("parameter `X` and `y_pred` Both given None.")
         
             y_pred = self.predict(X) # Getting Prediction
 

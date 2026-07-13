@@ -43,6 +43,7 @@ from rslearn.metrics import (
                             mae
                             )
 import numpy as np
+from rslearn.Errors import *
 
 
 class LinearRegression():
@@ -229,17 +230,17 @@ class LinearRegression():
         Output Format = 1D np.array
         """
         if len(new_data) == 0:
-            raise ValueError("Got Empty Array")
+            raise InvalidValueError("Got Empty Array")
 
         if not self._fitted:
-            raise ValueError("Model has not been fitted yet.")
+            raise InvalidValueError("Model has not been fitted yet.")
         
         new_data = np.asarray(new_data, dtype=float)
         if new_data.ndim == 1:
             new_data = new_data.reshape(-1, 1)
 
         if self.fitted_shape[1] != new_data.shape[1]:
-            raise ValueError(f"Invalid Shape, Model trained on {self.fitted_shape} but got {new_data.shape}")
+            raise InvalidValueError(f"Invalid Shape, Model trained on {self.fitted_shape} but got {new_data.shape}")
 
         if self.flag:
             new_data = self.Scaler.transform(new_data)
@@ -271,17 +272,17 @@ class LinearRegression():
 
 
         if not self._fitted: # If Model is not fitted
-            raise RuntimeError(
+            raise NotFittedError(
                 "This model is not trained yet. Call 'fit()' before using 'evaluate()'."
             )
 
         if y_true is None: # Edge case : Nothing to compare
-            raise ValueError("Invalid Arguments `y_true` `None`")
+            raise InvalidValueError("Invalid Arguments `y_true` `None`")
         
         
         if y_pred is None:
             if X is None: # Edge case: Both `X` and `y_pred` are None
-                raise ValueError("parameter `X` and `y_pred` Both given None.")
+                raise InvalidValueError("parameter `X` and `y_pred` Both given None.")
         
             y_pred = self.predict(X) # Getting Prediction
 

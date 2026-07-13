@@ -27,8 +27,11 @@ testing.py
 !.env.example
 
 
-# temps
+# temps - usefull while Testing
 knnC.py
 knnR.py
 
 .continue/
+
+# PR Tasks
+tasks.txt

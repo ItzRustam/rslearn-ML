@@ -14,8 +14,8 @@
 
 import numpy as np
 from numpy import dtype
-from rslearn.Errors import NotFittedError
-from rslearn.BaseEstimators._base import backupScaler
+from rslearn.Errors import *
+
 
 """For metrics/* for Multi-output Support"""
 def check_multioutput(parameter) -> None:
@@ -26,7 +26,7 @@ def check_multioutput(parameter) -> None:
     }
 
     if parameter not in valid_params:
-        raise ValueError(
+        raise InvalidValueError(
             f"Got Invalid Parameter, {parameter}. But supported {valid_params} only."
         )
 
@@ -131,12 +131,12 @@ def shape_checker(arr1, arr2, output_mode=True):
     """
     if output_mode:
         if arr1.shape != arr2.shape:
-            raise ValueError(f"Shape mismatch: {arr1.shape} vs {arr2.shape}")
+            raise InvalidShape(f"Shape mismatch: {arr1.shape} vs {arr2.shape}")
 
     # if arr1, arr2 are Coming from Regression X, y
 
     if len(arr1) != len(arr2):  # Assume as X, y
-        raise ValueError(f"Shape mismatch: {len(arr1)} vs {len(arr2)}")
+        raise InvalidShape(f"Shape mismatch: {len(arr1)} vs {len(arr2)}")
 
 """Dimensional Matcher For Only Metrics"""
 def dim_validator(arr1):
@@ -166,12 +166,12 @@ def multi_output_selector(multi_output_param, scores, weights):
 
         case "weighted":
             if weights is None:
-                raise ValueError("weights must be provided for weighted averaging")
+                raise InvalidValueError("weights must be provided for weighted averaging")
 
             weights = np.asarray(weights, dtype=float)
 
             if weights.shape[0] != len(scores):
-                raise ValueError("weights length must match number of outputs")
+                raise InvalidValueError("weights length must match number of outputs")
 
             return np.average(scores, weights=weights)
 

@@ -38,7 +38,7 @@ from rslearn.metrics import (accuracy_score,
                             recall, 
                             precision,
                             )
-
+from rslearn.Errors import *
 
 class LogisticRegression:
 
@@ -79,7 +79,7 @@ class LogisticRegression:
 
     def __init__(self, solver="auto", lr = 0.001):
         if solver not in ["saga", "liblinear", "auto"]:
-            raise ValueError(f"Solver Must be saga or liblinear or auto (Default), Got {solver}")
+            raise InvalidValueError(f"Solver Must be saga or liblinear or auto (Default), Got {solver}")
 
         self.solver = solver
         self.lr = lr
@@ -186,17 +186,17 @@ class LogisticRegression:
         """
 
         if len(X) == 0:
-            raise ValueError("Got Empty Array")
+            raise InvalidValueError("Got Empty Array")
         
         if not self._fitted:
-            raise ValueError("Model has not been fitted yet.")
+            raise InvalidValueError("Model has not been fitted yet.")
 
         X = np.asarray(X)
         if X.ndim == 1:
             X = X.reshape(-1, 1)
 
         if self.fitted_shape[1] != X.shape[1]:
-            raise ValueError(f"Invalid Shape, Model trained on {self.fitted_shape} but got {X.shape}")
+            raise InvalidValueError(f"Invalid Shape, Model trained on {self.fitted_shape} but got {X.shape}")
 
         # Scaling If Available
         if self.flag:
@@ -204,7 +204,7 @@ class LogisticRegression:
 
         # else Gradient Stability opration
         else:
-            X = X/max(X)
+            X = X/max(X) # fix it! we stored `maxx`
         
 
         probs = self.predict_proba(X)
@@ -237,17 +237,17 @@ class LogisticRegression:
 
 
         if not self._fitted: # If Model is not fitted
-            raise RuntimeError(
+            raise NotFittedError(
                 "This model is not trained yet. Call 'fit()' before using 'evaluate()'."
             )
 
         if y_true is None: # Edge case : Nothing to compare
-            raise ValueError("Invalid Arguments `y_true` `None`")
+            raise InvalidValueError("Invalid Arguments `y_true` `None`")
         
         
         if y_pred is None:
             if X is None: # Edge case: Both `X` and `y_pred` are None
-                raise ValueError("parameter `X` and `y_pred` Both given None.")
+                raise InvalidValueError("Both `X` and `y_pred` are None.")
         
             y_pred = self.predict(X) # Getting Prediction
 
