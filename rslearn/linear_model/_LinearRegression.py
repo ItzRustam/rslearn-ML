@@ -12,53 +12,46 @@
 #
 # See the LICENSE file for more details.
 
+# Linear Regression Implementation
 """
-Things : - 
-
-# it is linear regression
-y = m1x1 + m1x2 + m3x3 + ... + MnXn + b
-
+y = m1x1 + m2x2 + ... + MnXn + b
 y = prediction
 m = weight
 x = value
 b = bias
-
 loss = prediction - real_val
 dw = gradient descent of weight
 db = gradient descenf of bias
 
-It uses Gradients so, Use `StandardScaler` or `MinMaxScaler` for better result  
+It utilizes Gradients, so it's recommended to use `StandardScaler` or `MinMaxScaler` for better performance.
 
 Scalers...
 >>> from rslearn.preprocessing import StandardScaler, MinMaxScaler
-Read READNE.md or Documentation for More Information about their Functions
+For more information, refer to README.md or the documentation.
+
+Author: ItzRustam
 """
 
 from rslearn.BaseEstimators import _base
-from rslearn.preprocessing import StandardScaler
-from rslearn.metrics import (
-                            r2_score, 
-                            mse,
-                            rmse,
-                            mae
-                            )
+from rslearn.BaseEstimators import BaseEstimator
 import numpy as np
 from rslearn.Errors import *
+from rslearn.metrics import mse
 
 
-class LinearRegression():
+class LinearRegression(BaseEstimator):
 
 
-    def __init__(self, regulization=None, alpha : float = 0.1, l1_ratio=0.5):
+    def __init__(self, regulization=None, alpha : float = 0.1, l1_ratio=0.5, lr : float = 0.001, max_itr : int =1000, weights : np.array = None, bias : float = None, min_loss : float=0.1):
 
         """
         Linear Regression
         ------------------------
 
         linear Regression for 1D and 2D metrics arrays  using gradient descents and regulization
-        use Scalers like MinMaxScaler or StandardScaler before fitting for Handle large value
+        use Scalers like MinMaxScaler or StandardScaler before fitting for Handle large value.
 
-        Example
+        Parameters
         --------
         regulization: regulizing option to avoid overfitting
             options:  `l1` for Lasso  
@@ -67,54 +60,61 @@ class LinearRegression():
             
             Default: None, For No regulization.
         
-        alpha: alpha value for Ridge, Lasso, ElasticNet  
-            Default: 0.1  
+        alpha : float, default: 0.1 
+            alpha value for Ridge, Lasso, ElasticNet  
+             
         
-        l1_ratio: Lasso Ratio for Better ElasticNet Gradient and MSE  
-            Default: 0.5  
+        l1_ratio : float, default: 0.5 
+            Lasso Ratio for Better ElasticNet Gradient and MSE    
+             
         
-        Functions
+        lr : float, default=0.001
+            Learning rate for weight updates.  
+
+        max_itr : int, default=1000
+            Maximum number of iterations for the gradient descent algorithm.  
+
+        weights : np.array, optional
+            Initial weights for the model. If None, weights are initialized randomly.  
+
+        bias : float, optional
+            Initial bias for the model. If None, bias is initialized to 0.  
+
+        min_loss : float, default=0.1
+            Minimum loss threshold to stop training.  
+
+               
+        Methods
         ---------
         fit()
-            Function for Train Model | use MinMaxScaler for good Computation and Prediction  
-            Parameters - given in Function
+            Method for Train Model  
         
         get_weight_bias()
-            Returns Selected weight and Bias for minimum loss  
+            Returns Selected weight and Bias for minimum loss    
         
         predict()
-            Prediction generator from Model  
-        
+            Prediction generator from Model    
         
         Example
         -------
-
         >>> from rslearn.linear_model import LinearRegression
-        >>> Model = LinearRegression()
+        >>> Model = LinearRegression(max_itr=1800)
         >>> X = np.array([10, 20, 30]) # List also works.
         >>> y = np.array([5, 10, 15])
-        >>> Model.fit(X, y, scale=True) # You can change learning_rate too
+        >>> Model.fit(X, y, scale=True)
         >>> print(f"Weight & Bias: {Model.get_weight_bias()}")
         >>> prediction = Model.predict(np.array([40, 50]))
-        >>> print(f"Prediction: {prediction}")
-            
-
-        
+        >>> print(f"Evaluations: {Model.evaluate(y_pred=prediction, y_true=[20, 25])}")
         """
 
-        self.weights = None
-        self.bias = None
-        self.Scaler = StandardScaler() # Scaler
-        self.flag = False # Flag For Scaler Status
-        self.type = "regression"
-        self.fitted_shape = None # Edge Case
-        self._fitted = False # Edge Case
+        super().__init__(lr, max_itr, weights, bias)
 
         valid_params = {"l1", "l2", "elastic_net", None}
         if regulization not in valid_params:
-            raise ValueError(f"regulization parameter is not supported, supported Parameters {valid_params}")
+            raise InvalidValueError(f"regulization parameter is not supported, supported Parameters {valid_params}")
         
         self.calculate_error = self._regulizing_linear_helper(regulization=regulization, alpha=alpha, l1_ratio=l1_ratio)
+        self.min_loss = min_loss
             
     
 
@@ -122,41 +122,35 @@ class LinearRegression():
     def fit(self,
             X_arr ,
             y_arr , 
-            weights= None,
-            bias = None,
-            learning_rate : float = 0.001,
-            min_loss : float = 0.1,
-            max_itr : int = 18000,
-            verbose : bool = False,
             scale : bool = True
             ):
         """
+        `Fit` the linear regression model to the given data.
 
-        Input Param*
-        __________
-        X = Data to Train 1D or 2D array, Dtype = np.array   
+        Parameters
+        ----------
+        X_arr : np.array
+            Feature matrix of shape (n_samples, n_features).
 
-        Y = True value a.k.a. original prediction 1D or 2D array, Dtype = np.array  
+        y_arr : np.array
+            Target vector of shape (n_samples,).
 
-        max_itr = loop to update weight and bias, Dtype = int and default = 18000  | No Input need  
+        scale : bool, default=True
+            Whether to scale the features using StandardScaler before fitting. If True,
+            features are scaled; otherwise, they are not scaled.
 
-        learning_rate = how fast weights should update, Dtype = float, Default = 0.01
-
-        scale: Auto Scales Data On StandardScaler if True else Not
-            Default `True`
-
-        weights = enter custom weight |  optional  
-
-        bias = enter custom bias |  optional
-
-        min_loss = minimum loss where to stop the loop Default = 0.2, and it's almost best for gradient descent
-
-        verbose = True/False | Prints The iteration where Model Fitted Successfully
-
-        -----------------
-
-        Change the `learning_rate` or Use `Scalers` if output or weights contains 'e' e.g -1.8038873e+163
+        Returns
+        -------
+        str
+            A success message indicating that the model has been fitted successfully.
+        
+        Notes
+        -----
+        This method performs gradient descent optimization to find the optimal weights
+        and bias for minimizing the mean squared error (MSE). If regularization is applied,
+        it adjusts the loss function accordingly.
         """
+        self.type = "regression"
 
         X, y = _base.convert_array(arr1=X_arr, arr2=y_arr) # Converting to np.array
         y = y.reshape(-1)
@@ -167,11 +161,10 @@ class LinearRegression():
         _base.shape_checker(X, y, output_mode=False)
 
         if scale:
-            X = self.Scaler.fit_transform(X)
+            X = self._scale_True(X, scaled=False)
             self.flag = True
         else:
-            X = X/max(X)
-            self.maxx = max(X)
+            X = self._scale_False(X, scaled=False)
         
 
         
@@ -179,32 +172,34 @@ class LinearRegression():
         self.fitted_shape = X.shape
 
         np.random.seed(7)
-        if weights is None:
-            weights = np.random.uniform(0.2, 3, n_feature)
+        if self.weights is None:
+            weights_temp = np.random.uniform(0.2, 3, n_feature)
+        else:
+            weights_temp = self.weights
         
-        if bias is None:
-            bias = 0
+        if self.bias is None:
+            bias_temp = 0
+        else:
+            bias_temp = self.bias
 
         iteration  = 0
 
-        while iteration < max_itr:
-            pred = np.dot(X, weights) + bias # prediction
+        while iteration < self.max_itr:
+            pred = np.dot(X, weights_temp) + bias_temp # prediction
 
-            mse_error : float = self.calculate_error.get_error(y_true=y, y_pred=pred, weights=weights)
+            mse_error : float = self.calculate_error.get_error(y_true=y, y_pred=pred, weights=weights_temp)
 
-            if mse_error <= min_loss:
-                if verbose:
-                    print(f"Model Succesfully Fitted at #{iteration} iteration")
+            if mse_error <= self.min_loss:
                 break
 
             loss = pred - y # Loss for Gradients
-            dw = (2/n_samples) * np.dot(X.T, loss) + self.calculate_error.get_weight_gradient(weights=weights)
+            dw = (2/n_samples) * np.dot(X.T, loss) + self.calculate_error.get_weight_gradient(weights=weights_temp)
             db = (2/n_samples) * np.sum(loss)
 
-            weights -= learning_rate * dw
-            bias -= learning_rate * db
+            weights_temp -= self.lr * dw
+            bias_temp -= self.lr * db
 
-            if _base.check_overflow(weights=weights, bias=bias):
+            if _base.check_overflow(weights=weights_temp, bias=bias_temp):
                 print("NaN detected, stopping training, Use Scalers to avoid it")
                 break
 
@@ -212,17 +207,12 @@ class LinearRegression():
 
 
         
-        self.weights = weights
-        self.bias = bias
+        self.weights = weights_temp
+        self.bias = bias_temp
         self._fitted = True
+        
+        return "Model Fitted Successfully"
 
-    def get_weight_bias(self) -> np.array:
-        """Input = None, 
-        O/P - (np.array, float64)
-        >>> weights, bias = Model.get_weight_bias()
-        """
-
-        return (self.weights, self.bias)
     
     def predict(self, new_data : np.array) -> np.array:
         """
@@ -243,9 +233,9 @@ class LinearRegression():
             raise InvalidValueError(f"Invalid Shape, Model trained on {self.fitted_shape} but got {new_data.shape}")
 
         if self.flag:
-            new_data = self.Scaler.transform(new_data)
+            new_data = self._scale_True(X=new_data, scaled=True)
         else:
-            new_data = new_data/self.maxx # Stability
+            new_data = self._scale_False(X=new_data, scaled=True)
         
 
         return (np.dot(new_data, self.weights) + self.bias).round()
@@ -270,48 +260,8 @@ class LinearRegression():
                 True target values for evaluation.
         """
 
-
-        if not self._fitted: # If Model is not fitted
-            raise NotFittedError(
-                "This model is not trained yet. Call 'fit()' before using 'evaluate()'."
-            )
-
-        if y_true is None: # Edge case : Nothing to compare
-            raise InvalidValueError("Invalid Arguments `y_true` `None`")
+        return super()._eval(X=X, y_pred=y_pred, y_true=y_true)
         
-        
-        if y_pred is None:
-            if X is None: # Edge case: Both `X` and `y_pred` are None
-                raise InvalidValueError("parameter `X` and `y_pred` Both given None.")
-        
-            y_pred = self.predict(X) # Getting Prediction
-
-
-        # Converting to `np.array`` if they are not
-        y_pred = np.asarray(y_pred, dtype=float) # if y_pred != None, Otherwise Model will return `np.array``
-        y_true = np.asarray(y_true, dtype=float)
-        y_true = y_true.reshape(-1) # reshaping y_true to 1D to match with y_pred
-
-        _base.shape_checker(arr1=y_true, arr2=y_pred, output_mode=True)
-
-        # Evaluations for Regression Task
-        r2_Score = r2_score(y_true=y_true, y_pred=y_pred)
-        MSE = mse(y_true=y_true, y_pred=y_pred)
-        MAE = mae(y_true=y_true, y_pred=y_pred)
-        RMSE = rmse(y_true=y_true, y_pred=y_pred)
-
-        evaluations = { # Storing in Dict
-            "r2_score": r2_Score,
-            "mse": float(MSE),
-            "mae": float(MAE),
-            "rmse": float(RMSE)
-        }
-
-        # Returning `prediction` and `Evaluation` for future Flask/FastAPI support
-        return {
-            "prediction" : y_pred,
-            "evaluation" : evaluations
-        }
         
 
 
