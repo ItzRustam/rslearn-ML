@@ -4,21 +4,24 @@ from rslearn.BaseEstimators import _base
 from abc import ABC, abstractmethod
 from rslearn.Errors import *
 from rslearn.metrics import *
+import rslearn
+import json
+import gzip
 
 """Secodary Scaler"""
 class backupScaler:
     def __init__(self, epsilon=1e-9):
-        self.__max = 0
-        self.__epsilon = epsilon
-        self.__fitted = False
+        self.maxx = 0
+        self.epsilon = epsilon
+        self._fitted = False
     
     def fit(self, X):
-        self.__max = np.max(X)
-        self.__fitted = True
+        self.maxx = np.max(X)
+        self._fitted = True
     
     def transform(self, X):
-        if self.__fitted:
-            new_X = X/(self.__max + self.__fitted) # avoid devisible by 0
+        if self._fitted:
+            new_X = X/(self.maxx + self.epsilon) # avoid devisible by 0
             return new_X
         else:
             raise NotFittedError("Scaler has not been fitted yet.")
@@ -42,6 +45,8 @@ class BaseEstimator(ABC):
         self.type = "base"
         self.fitted_shape = None # Edge Case
         self._fitted = False # Edge Case
+        self._model = "BaseEstimator"
+        self._lib_version = rslearn.__version__
     
     # If scale=True
     def _scale_True(self, X, scaled=False):
@@ -173,6 +178,39 @@ class BaseEstimator(ABC):
         """
         return (self.weights, self.bias)
 
+    def save(self, file_name : str = "rslearn_model.rsl"):
+        if not(self._fitted):
+            raise NotFittedError("Model has not been fitted yet, use `fit()`")
+        
+        model_data = {
+            "model": self._model,
+            "version": self._lib_version,
+            "primary scaled": self.flag,
+            "weights": self.weights.tolist(),
+            "bias": float(self.bias),
+            "fitted_shape" : self.fitted_shape,
+            "scaler": {
+                "true": {
+                    "scaler_name": "StandardScaler",
+                    "mean": self.Scaler.mean.tolist(),
+                    "std": self.Scaler.std.tolist()
+                },
+                "false": {
+                    "scaler_name": "BackupScaler",
+                    "max": float(self.backup_scaler.maxx)
+                }
+            }
+        }
+
+        json_bytes = json.dumps(model_data).encode("utf-8")
+
+        compressed = gzip.compress(json_bytes)
+
+        with open(file_name, "wb") as f:
+            f.write(compressed)
+
+        return f"Model Saved Successfully with {file_name}"
+        
 
 
 

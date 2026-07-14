@@ -115,7 +115,8 @@ class LinearRegression(BaseEstimator):
         
         self.calculate_error = self._regulizing_linear_helper(regulization=regulization, alpha=alpha, l1_ratio=l1_ratio)
         self.min_loss = min_loss
-            
+        self._model = "LinearRegression"
+        self.type = "regression"
     
 
 
@@ -150,7 +151,7 @@ class LinearRegression(BaseEstimator):
         and bias for minimizing the mean squared error (MSE). If regularization is applied,
         it adjusts the loss function accordingly.
         """
-        self.type = "regression"
+
 
         X, y = _base.convert_array(arr1=X_arr, arr2=y_arr) # Converting to np.array
         y = y.reshape(-1)
