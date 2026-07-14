@@ -32,7 +32,7 @@ Origination - **<a href="https://github.com/rslearn-lib">rslearn-lib</a>**
 ---
 
 ## Release & Changes
-* **Version : 1.0.8 - 1.0.3**
+* **Version : 1.0.9 - 1.0.4** 
 * **Release Date: 2026-06-26**
 
 ## 

@@ -35,3 +35,6 @@ knnR.py
 
 # PR Tasks
 tasks.txt
+
+# Project prefix
+*.rsl
