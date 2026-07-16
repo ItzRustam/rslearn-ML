@@ -1,3 +1,3 @@
-from ._estimator import BaseEstimator, backupScaler
+from ._estimator import BaseEstimator, backupScaler, BaseEstimatorKNN
 
-__all__ = ['BaseEstimator', 'backupScaler']
+__all__ = ['BaseEstimator', 'backupScaler', 'BaseEstimatorKNN']

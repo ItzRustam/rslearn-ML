@@ -37,4 +37,11 @@ knnR.py
 tasks.txt
 
 # Project prefix
+# Old - .rsl
 *.rsl
+# for LogisticRegression - .rslc
+*.rslc
+# For LinearRegression - .rslr
+*.rslr
+# For Pipeline - .prsl
+*.prsl
