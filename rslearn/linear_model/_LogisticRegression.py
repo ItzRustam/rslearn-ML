@@ -12,6 +12,7 @@
 #
 # See the LICENSE file for more details.
 
+
 """
 Logistic Regression implementation using Gradient Descent.
 
@@ -39,13 +40,15 @@ from rslearn.metrics import (accuracy_score,
                             precision,
                             )
 from rslearn.Errors import *
+from rslearn.BaseEstimators import BaseEstimator
+from typing import List
 
-class LogisticRegression:
+class LogisticRegression(BaseEstimator):
 
     """
     Logistic Regression
     -------------------
-    Logistic Regression for 1D and 2D metrics both with binary and Catogirical classification both supported  
+    Logistic Regression for 1D and 2D metrics both with binary and Catogirical classification support  
 
     use any Scaler for better result and accuracy specially in catogirical classification  
 
@@ -77,19 +80,17 @@ class LogisticRegression:
 
     """
 
-    def __init__(self, solver="auto", lr = 0.001):
+    def __init__(self, solver="auto", lr = 0.001, weights : np.array= None, bias : float = None, catogirical_model : List[LogisticRegression] = [], max_itr : int =3000, hard_scale_off = False):
         if solver not in ["saga", "liblinear", "auto"]:
             raise InvalidValueError(f"Solver Must be saga or liblinear or auto (Default), Got {solver}")
 
+        super().__init__(lr, max_itr, weights, bias)
+
         self.solver = solver
-        self.lr = lr
-        self.weights = None
-        self.bias = None
-        self.Scaler = StandardScaler()
-        self.flag = False # Flag for Scaler's Status
         self.type = "classification" # Flag for Pipeline
-        self.fitted_shape=None # Edge Case
-        self._fitted=False
+        self._model = "LogisticRegression"
+        self._cato_model = catogirical_model
+        self.hard_scale_off = hard_scale_off
 
     # Probablity predictor for catogirical classification
     def predict_proba(self, X):
@@ -102,14 +103,14 @@ class LogisticRegression:
             return np.vstack((probs_0, probs_1)).T
     
         else:
-            probs = [m.predict_proba(X)[:, 1] for m in self._cato_model.models]
+            probs = [m.predict_proba(X)[:, 1] for m in self._cato_model]
             probs = np.vstack(probs).T
     
             # normalize
             probs = probs / probs.sum(axis=1, keepdims=True)
             return probs
 
-    def fit(self, X, y, max_itr = 1000, scale=True):
+    def fit(self, X, y, scale=True):
 
         """
         Function for fitting Logistic Regression Model
@@ -121,9 +122,6 @@ class LogisticRegression:
         
         y: correct value for X features set
             1D array | `np.array`  
-        
-        max_itr: maximum itration to loop though  
-            Default `1000`
 
         scale: Auto Scales Data On StandardScaler if True else Not
             Default `True`
@@ -142,13 +140,13 @@ class LogisticRegression:
 
         _base.shape_checker(X, y, output_mode=False) # Checking Shapes of Arrays
 
-
-        if scale:
-            X = self.Scaler.fit_transform(X)
+        if self.hard_scale_off:
+            pass
+        elif scale:
+            X = self._scale_True(X, scaled=False)
             self.flag = True
         else:
-            X = X/max(X)
-            self.maxx = max(X) # Gradient Stability
+            X = self._scale_False(X, scaled=False) # Gradient Stability
 
         self.fitted_shape=X.shape
 
@@ -163,13 +161,15 @@ class LogisticRegression:
 
         # Diffrent condition for fit
         if self.solver == "liblinear":
-            Model = _binary_fit(X=X, y=y, lr=self.lr)
-            self.weights, self.bias = Model.fit()
+            Model = _binary_fit(X=X, y=y, lr=self.lr, max_itr=self.max_itr)
+            self.weights, self.bias = Model.fit(weights=self.weights, bias=self.bias)
         
         else:
-            Model = _catogirical_fit(X=X, y=y)
+            Model = _catogirical_fit(X=X, y=y, max_itr=self.max_itr)
             Model.fit()
-            self._cato_model = Model # Saving saga Model
+            self._cato_model = Model.models # Saving saga Model
+            self.weights = np.array([0., 0.])
+            self.bias = 0
         
         self._fitted = True
 
@@ -198,13 +198,15 @@ class LogisticRegression:
         if self.fitted_shape[1] != X.shape[1]:
             raise InvalidValueError(f"Invalid Shape, Model trained on {self.fitted_shape} but got {X.shape}")
 
-        # Scaling If Available
+        if self.hard_scale_off:
+            pass
+        # Scaling If Available when hard_scale_off is False
         if self.flag:
-            X = self.Scaler.transform(X)
+            X = self._scale_True(X, scaled=True)
 
-        # else Gradient Stability opration
+        # else Gradient Stability opration with X/max(X) + 1e-9
         else:
-            X = X/max(X) # fix it! we stored `maxx`
+            X = self._scale_False(X, scaled=True)
         
 
         probs = self.predict_proba(X)
@@ -236,47 +238,10 @@ class LogisticRegression:
         """
 
 
-        if not self._fitted: # If Model is not fitted
-            raise NotFittedError(
-                "This model is not trained yet. Call 'fit()' before using 'evaluate()'."
-            )
-
-        if y_true is None: # Edge case : Nothing to compare
-            raise InvalidValueError("Invalid Arguments `y_true` `None`")
-        
-        
-        if y_pred is None:
-            if X is None: # Edge case: Both `X` and `y_pred` are None
-                raise InvalidValueError("Both `X` and `y_pred` are None.")
-        
-            y_pred = self.predict(X) # Getting Prediction
-
-
-        # Converting to `np.array`` if they are not
-        y_pred = np.asarray(y_pred) # if y_pred != None, Otherwise Model will return `np.array``
-        y_true = np.asarray(y_true)
-        y_true = y_true.reshape(-1) # reshaping y_true to 1D to match with y_pred
-
-        _base.shape_checker(arr1=y_true, arr2=y_pred, output_mode=True)
-
-        # Evaluations for Classification Tasks Task
-        accuracy = accuracy_score(y_true=y_true, y_pred=y_pred)
-        F1 = f1_score(y_true=y_true, y_pred=y_pred)
-        Recall = recall(y_true=y_true, y_pred=y_pred)
-        Precision = precision(y_true=y_true, y_pred=y_pred)
-
-        evaluations = { # Storing in Dict
-            "accuracy_score": float(accuracy),
-            "f1_score": F1,
-            "recall": Recall,
-            "precision": Precision
-        }
-
-        # Returning `prediction` and `Evaluation` for future Flask/FastAPI support
-        return {
-            "prediction" : y_pred,
-            "evaluation" : evaluations
-        }
+        return super()._eval(X=X, y_pred=y_pred, y_true=y_true)
+    
+    def save(self, file_name="rslearn_model.rsl"):
+        super().save(file_name=file_name, solver=self.solver, catogirical_models=self._cato_model)
         
                 
 
@@ -291,13 +256,14 @@ class _binary_fit:
     def _sigmoid(self, z):
         return 1 / (1 + np.exp(-z))
 
-    def fit(self):
+    def fit(self, weights=None, bias=None):
         X = self.X
         y = self.y
         n_rows, n_features = X.shape
-
-        weights = np.zeros(n_features)
-        bias = 0
+        if weights is None:
+            weights = np.random.uniform(0.2, 3, n_features)
+        if bias is None:
+            bias = 0
 
         for _ in range(self.max_itr):
             z = np.dot(X, weights) + bias 
@@ -321,9 +287,10 @@ class _binary_fit:
 
 # For Catogrical
 class _catogirical_fit:
-    def __init__(self, X, y):
+    def __init__(self, X, y, max_itr=1000):
         self.X = X
         self.y = y
+        self.max_itr=max_itr
     
     def fit(self):
         X = self.X
@@ -332,7 +299,7 @@ class _catogirical_fit:
         self.classes = np.unique(y)
 
         for c in self.classes:
-            model = LogisticRegression(solver="liblinear")
+            model = LogisticRegression(solver="liblinear", max_itr=self.max_itr)
             y_bin = (y == c).astype(int)
             model.fit(X, y_bin)
             self.models.append(model)
