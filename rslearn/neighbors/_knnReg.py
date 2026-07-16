@@ -23,11 +23,12 @@ from rslearn.metrics import (
     rmse
 )
 from rslearn.BaseEstimators import _base
+from rslearn.BaseEstimators import BaseEstimatorKNN
 
 
 
-class KNNRegressor:
-    def __init__(self, k_neighbors=5):
+class KNNRegressor(BaseEstimatorKNN):
+    def __init__(self, k_neighbors=5, hard_scale_off : float = False):
         """
         KNNRegressor Class
 
@@ -49,17 +50,10 @@ class KNNRegressor:
                 Evaluate model performance using various regression metrics.
         """
 
-        if k_neighbors <= 0:
-            raise InvalidValueError("k_neighbors can't be smaller than 1")
-
-        self.k = k_neighbors
-        self.Scaler = StandardScaler() # Scaler
-        self.flag = False # Flag For Scaler Status
-        self.type = "classification"
-        self.fitted_shape = None # Edge Case
-        self._fitted = False # Edge Case
-        self.fitted_x = None
-        self.fitted_y = None
+        super().__init__(k_neighbors=k_neighbors)
+        self.type = "regression"
+        self._model = "KNNRegressor"
+        self.hard_scale_off = hard_scale_off
     
     def fit(self, X, y, scale=True):
         """
@@ -82,11 +76,13 @@ class KNNRegressor:
         if len(X) != len(y):
             raise LengthError(f"Length Mismatch {(len(X), len(y))}")
         
-        if scale:
-            X = self.Scaler.fit_transform(X)
+        if self.hard_scale_off:
+            pass
+        elif scale:
+            X = self._scale_True(X, scaled=False)
             self.flag = True
         else:
-            X = X/np.max(X)
+            X = self._scale_False(X, scaled=False)
         
 
         self.fitted_x = X
@@ -114,10 +110,12 @@ class KNNRegressor:
         if X_new.shape[1] != self.fitted_shape[1]:
             raise InvalidShape(f"Invalid Shape, Model fitted on {self.fitted_shape} Got {X_new.shape}")
         
-        if self.flag:
-            X_new = self.Scaler.transform(X_new)
+        if self.hard_scale_off:
+            pass
+        elif self.flag:
+            X_new = self._scale_True(X_new, scaled=True)
         else:
-            X_new = X_new/np.max(X_new)
+            X_new = self._scale_False(X_new, scaled=True)
         
         response = []
 
@@ -158,47 +156,7 @@ class KNNRegressor:
         """
 
 
-        if not self._fitted: # If Model is not fitted
-            raise NotFittedError(
-                "This model is not trained yet. Call 'fit()' before using 'evaluate()'."
-            )
-
-        if y_true is None: # Edge case : Nothing to compare
-            raise InvalidValueError("Invalid Arguments `y_true` `None`")
-        
-        
-        if y_pred is None:
-            if X is None: # Edge case: Both `X` and `y_pred` are None
-                raise InvalidValueError("parameter `X` and `y_pred` Both given None.")
-        
-            y_pred = self.predict(X) # Getting Prediction
-
-
-        # Converting to `np.array`` if they are not
-        y_pred = np.asarray(y_pred, dtype=float) # if y_pred != None, Otherwise Model will return `np.array``
-        y_true = np.asarray(y_true, dtype=float)
-        y_true = y_true.reshape(-1) # reshaping y_true to 1D to match with y_pred
-
-        _base.shape_checker(arr1=y_true, arr2=y_pred, output_mode=True)
-
-        # Evaluations for Regression Task
-        r2_Score = r2_score(y_true=y_true, y_pred=y_pred)
-        MSE = mse(y_true=y_true, y_pred=y_pred)
-        MAE = mae(y_true=y_true, y_pred=y_pred)
-        RMSE = rmse(y_true=y_true, y_pred=y_pred)
-
-        evaluations = { # Storing in Dict
-            "r2_score": r2_Score,
-            "mse": float(MSE),
-            "mae": float(MAE),
-            "rmse": float(RMSE)
-        }
-
-        # Returning `prediction` and `Evaluation` for future Flask/FastAPI support
-        return {
-            "prediction" : y_pred,
-            "evaluation" : evaluations
-        }
+        return super()._eval(X=X, y_pred=y_pred, y_true=y_true)
     
 
 if __name__ == '__main__':
