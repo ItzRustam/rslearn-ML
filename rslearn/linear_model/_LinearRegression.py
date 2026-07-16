@@ -42,7 +42,7 @@ from rslearn.metrics import mse
 class LinearRegression(BaseEstimator):
 
 
-    def __init__(self, regulization=None, alpha : float = 0.1, l1_ratio=0.5, lr : float = 0.001, max_itr : int =1000, weights : np.array = None, bias : float = None, min_loss : float=0.1):
+    def __init__(self, regulization=None, alpha : float = 0.1, l1_ratio=0.5, lr : float = 0.001, max_itr : int =3000, weights : np.array = None, bias : float = None, min_loss : float=0.1, hard_scale_off = False):
 
         """
         Linear Regression
@@ -83,6 +83,9 @@ class LinearRegression(BaseEstimator):
         min_loss : float, default=0.1
             Minimum loss threshold to stop training.  
 
+        hard_scale_off : bool, default=False  
+            Stop any scaling when ``True``, `scale=True or False` will be ignored.  
+
                
         Methods
         ---------
@@ -117,6 +120,7 @@ class LinearRegression(BaseEstimator):
         self.min_loss = min_loss
         self._model = "LinearRegression"
         self.type = "regression"
+        self.hard_scale_off = hard_scale_off
     
 
 
@@ -124,7 +128,7 @@ class LinearRegression(BaseEstimator):
             X_arr ,
             y_arr , 
             scale : bool = True
-            ):
+        ):
         """
         `Fit` the linear regression model to the given data.
 
@@ -138,7 +142,8 @@ class LinearRegression(BaseEstimator):
 
         scale : bool, default=True
             Whether to scale the features using StandardScaler before fitting. If True,
-            features are scaled; otherwise, they are not scaled.
+            features are scaled; otherwise, they are not scaled.  
+            ignored completely when hard_scale_off=True
 
         Returns
         -------
@@ -161,7 +166,10 @@ class LinearRegression(BaseEstimator):
 
         _base.shape_checker(X, y, output_mode=False)
 
-        if scale:
+
+        if self.hard_scale_off:
+            pass
+        elif scale:
             X = self._scale_True(X, scaled=False)
             self.flag = True
         else:
@@ -221,19 +229,21 @@ class LinearRegression(BaseEstimator):
         Output Format = 1D np.array
         """
         if len(new_data) == 0:
-            raise InvalidValueError("Got Empty Array")
+            raise LengthError("Got Empty Array")
 
         if not self._fitted:
-            raise InvalidValueError("Model has not been fitted yet.")
+            raise NotFittedError("Model has not been fitted yet.")
         
         new_data = np.asarray(new_data, dtype=float)
         if new_data.ndim == 1:
             new_data = new_data.reshape(-1, 1)
 
         if self.fitted_shape[1] != new_data.shape[1]:
-            raise InvalidValueError(f"Invalid Shape, Model trained on {self.fitted_shape} but got {new_data.shape}")
+            raise InvalidShape(f"Invalid Shape, Model trained on {self.fitted_shape} but got {new_data.shape}")
 
-        if self.flag:
+        if self.hard_scale_off:
+            pass
+        elif self.flag:
             new_data = self._scale_True(X=new_data, scaled=True)
         else:
             new_data = self._scale_False(X=new_data, scaled=True)
@@ -263,7 +273,9 @@ class LinearRegression(BaseEstimator):
 
         return super()._eval(X=X, y_pred=y_pred, y_true=y_true)
         
-        
+    def save(self, file_name="rslearn_model.rsl"):
+        super().save(file_name=file_name)
+    
 
 
         
@@ -317,3 +329,5 @@ class LinearRegression(BaseEstimator):
 
 if __name__ == "__main__":
     Model = LinearRegression()
+
+

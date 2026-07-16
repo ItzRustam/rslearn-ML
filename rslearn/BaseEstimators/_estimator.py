@@ -7,6 +7,7 @@ from rslearn.metrics import *
 import rslearn
 import json
 import gzip
+from typing import List
 
 """Secodary Scaler"""
 class backupScaler:
@@ -34,7 +35,7 @@ class backupScaler:
 
 # Task - Complete This Class.
 class BaseEstimator(ABC):
-    def __init__(self, lr : float = 0.001, max_itr : int =1000, weights : np.array = None, bias : float = None):
+    def __init__(self, lr : float = 0.001, max_itr : int =3000, weights : np.array = None, bias : float = None):
         self.lr = lr
         self.max_itr = max_itr
         self.weights = weights
@@ -47,6 +48,7 @@ class BaseEstimator(ABC):
         self._fitted = False # Edge Case
         self._model = "BaseEstimator"
         self._lib_version = rslearn.__version__
+        self.hard_scale_off = None
     
     # If scale=True
     def _scale_True(self, X, scaled=False):
@@ -177,17 +179,16 @@ class BaseEstimator(ABC):
         >>> weights, bias = Model.get_weight_bias()
         """
         return (self.weights, self.bias)
-
-    def save(self, file_name : str = "rslearn_model.rsl"):
-        if not(self._fitted):
-            raise NotFittedError("Model has not been fitted yet, use `fit()`")
-        
+    
+    def __save_regressor_model(self, file_name : str = "rslearn_model.rslr"):
         model_data = {
             "model": self._model,
             "version": self._lib_version,
+            "rslearn_compressed": True,
             "primary scaled": self.flag,
             "weights": self.weights.tolist(),
             "bias": float(self.bias),
+            "hard_scale_off" : self.hard_scale_off,
             "fitted_shape" : self.fitted_shape,
             "scaler": {
                 "true": {
@@ -210,6 +211,77 @@ class BaseEstimator(ABC):
             f.write(compressed)
 
         return f"Model Saved Successfully with {file_name}"
+    
+
+    def __save_classification_model(self, file_name : str = "rslearn_model.rslc", solver="liblinear", catogirical_models=[]):
+        catog_models_ = {}
+
+        if len(catogirical_models) == 0:
+            pass
+        else:
+            for count, model in enumerate(catogirical_models):
+                weight_bias = {
+                    'weights' : model.weights.tolist(),
+                    'bias' : float(model.bias)
+                }
+                catog_models_[f'model_{count}'] = weight_bias
+        print(catog_models_)
+        model_data = {
+            "model": self._model,
+            "version": self._lib_version,
+            "rslearn_compressed": True,
+            "primary scaled": self.flag,
+            "solver" : solver,
+            "solver_options":{
+                "liblinear":{
+                    "weights": self.weights.tolist(),
+                    "bias": float(self.bias),
+                },
+                "saga":{
+                    "catogirical_models" : catog_models_
+                }
+            },
+
+            "hard_scale_off" : self.hard_scale_off,
+            "fitted_shape" : self.fitted_shape,
+            "scaler": {
+                "true": {
+                    "scaler_name": "StandardScaler",
+                    "mean": self.Scaler.mean.tolist(),
+                    "std": self.Scaler.std.tolist()
+                },
+                "false": {
+                    "scaler_name": "BackupScaler",
+                    "max": float(self.backup_scaler.maxx)
+                }
+            }
+        }
+
+        json_bytes = json.dumps(model_data).encode("utf-8")
+
+        compressed = gzip.compress(json_bytes)
+
+        with open(file_name, "wb") as f:
+            f.write(compressed)
+
+        return f"Model Saved Successfully with {file_name}"
+    
+
+    def save(self, file_name : str = "rslearn_model.rsl", solver="liblinear", catogirical_models=[]):
+        if not(self._fitted):
+            raise NotFittedError("Model has not been fitted yet, use `fit()`")
+        if not(file_name.endswith(".rsl")):
+            raise Error("Only `.rsl` format are supported")
+        
+        if self._model == "LinearRegression":
+            self.__save_regressor_model(file_name=f"{file_name}r")
+        elif self._model == "LogisticRegression":
+            self.__save_classification_model(file_name=f"{file_name}c", solver=solver, catogirical_models=catogirical_models)
+        else:
+            raise Error(f"{self._model} does not support saving.")
+            
+        
+        
         
 
 
