@@ -233,7 +233,7 @@ class BaseEstimator(ABC):
                     'bias' : float(model.bias)
                 }
                 catog_models_[f'model_{count}'] = weight_bias
-                
+
         model_data = {
             "model": self._model,
             "version": self._lib_version,
@@ -439,6 +439,32 @@ class BaseEstimatorKNN(ABC):
         else:
             raise Error(f"Invalid Class type `{self.type}`")
         
+class BaseEstimatorRegulization:
+    def __init__(self, alpha=0.1, l1_ratio=0.5, regulization=None, min_loss=0.1, max_itr=3000, hard_scale_off=False):
+        self.alpha = alpha
+        self.l1_ratio = l1_ratio
+        self.min_loss = min_loss
+        self.max_itr = max_itr
+        self.hard_scale_off = hard_scale_off
+        self.regulization = regulization
+
+        self.model = rslearn.linear_model.LinearRegression(regulization=regulization, alpha=self.alpha, l1_ratio=self.l1_ratio, min_loss=self.min_loss, max_itr=self.max_itr, hard_scale_off=hard_scale_off)
+    
+    def fit(self, X, y, scale=True):
+        self.model.fit(X, y, scale=scale)
+    
+    def predict(self, X_new):
+        prediction = self.model.predict(X_new)
+        return prediction
+    
+    def get_weight_bias(self):
+        return self.model.get_weight_bias()
+    
+    def evaluate(self, X=None, y_pred=None, y_true=None):
+        return self.model.evaluate(X=X, y_pred=y_pred, y_true=y_true)
+        
+    def save(self, file_name : str = "rslearn_model.rsl"):
+        self.model.save(file_name=file_name)
 
 
 
