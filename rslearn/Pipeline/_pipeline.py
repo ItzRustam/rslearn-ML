@@ -35,6 +35,7 @@ from pprint import pprint
 import rslearn
 import json
 import gzip
+import random
 import warnings
 
 class pipeline:
@@ -279,7 +280,6 @@ class pipeline:
         if self.scaling:
             new_data = self.__scaler_helper(new_data, scaled=True)
                 
-                
         pred = self.Model.predict(new_data)
         return pred
     
@@ -326,10 +326,10 @@ class pipeline:
         if not(file_name.endswith(".prsl")):
             raise Error("Pipeline Supports `.prsl` format.")
         
-        file_id = np.random.randint(0, 1000000)
+        file_id = random.randint(0, 1000000)
         actual_model = self.Model._model
-        self.Model._model = f"pipeline_{self.Model._model}_{file_id}"
-        self.Model.save(f"{self.Model._model}.rsl")
+        self.Model.model._model = f"pipeline_{self.Model._model}_{file_id}"
+        self.Model.save(f"pipeline_{actual_model}.rsl")
         pipeline_data = {
             "pipeline" : True,
             "version" : rslearn.__version__,
@@ -338,6 +338,9 @@ class pipeline:
             "model_id" : file_id,
             "scaling" : self.scaling,
             "scaler": self.Scaler.name,
+            "task" : self.Model.type,
+            "split" : self.split,
+            "split_params" : self.split_params
         }
 
         if pipeline_data["scaler"] == "MinMaxScaler":
@@ -354,20 +357,14 @@ class pipeline:
             }
 
 
-        print(pipeline_data)
-
-        file_n = file_name.replace(".prsl", "")
-        file_n = f"{file_n}_{file_id}.prsl"
-
         json_bytes = json.dumps(pipeline_data).encode("utf-8")
 
         compressed = gzip.compress(json_bytes)
 
-        with open(file_n, "wb") as f:
+        with open(file_name, "wb") as f:
             f.write(compressed)
 
-        warnings.warn("Do not Change or Edit Model's file name.")
-        return f"Pipeline & Model Saved Successfully with {file_n} & {self.Model._model}.rsl"
+        return f"Pipeline & Model Saved Successfully with {file_name} & {self.Model._model}.rsl"
 
 
 

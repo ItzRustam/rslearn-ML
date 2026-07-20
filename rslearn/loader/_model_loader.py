@@ -71,7 +71,7 @@ def load_linear(file_path : str = "rslearn_model.rslr"):
     if model_data["task"] != "regression":
         raise Error("Invalid Regression Model.")
 
-    # model : LinearRegression = model_selector(model_name=model_data['model'], weights=model_data['weights'], bias=model_data['bias'])
+    
     model = LinearRegression(regulization=model_data["params"]["regulization"], alpha=model_data["params"]["alpha"], l1_ratio=model_data["params"]["l1_ratio"], min_loss=model_data["params"]["min_loss"], lr=model_data["params"]["lr"], weights=np.array(model_data["weights"]), bias=model_data["bias"], hard_scale_off=model_data["hard_scale_off"], max_itr=model_data["params"]["max_itr"])
 
 

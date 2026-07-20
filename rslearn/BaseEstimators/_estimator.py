@@ -288,12 +288,12 @@ class BaseEstimator(ABC):
         if not(file_name.endswith(".rsl")):
             raise Error("Only `.rsl` format are supported")
         
-        if self._model == "LinearRegression":
+        if self.type == "regression":
             self.__save_regressor_model(file_name=f"{file_name}r", regulization=regulization, min_loss=min_loss, alpha=alpha, l1_ratio=l1_ratio)
-        elif self._model == "LogisticRegression":
+        elif self.type == "classification":
             self.__save_classification_model(file_name=f"{file_name}c", solver=solver, catogirical_models=catogirical_models)
         else:
-            raise Error(f"{self._model} does not support saving.")
+            raise Error(f"{self.type} does not support saving.")
             
         
 class BaseEstimatorKNN(ABC):
@@ -448,9 +448,10 @@ class BaseEstimatorRegulization:
         self.hard_scale_off = hard_scale_off
         self.regulization = regulization
         self._model = "regu_base"
+        self.type = "regression"
 
         self.model = rslearn.linear_model.LinearRegression(regulization=regulization, alpha=self.alpha, l1_ratio=self.l1_ratio, min_loss=self.min_loss, max_itr=self.max_itr, hard_scale_off=hard_scale_off)
-    
+        self.model._model = self._model
     def fit(self, X, y, scale=True):
         self.model.fit(X, y, scale=scale)
     
