@@ -56,7 +56,8 @@ class Lasso(BaseEstimatorRegulization):
 
     def __init__(self, alpha=0.1, l1_ratio=0.5, min_loss=0.1, max_itr=3000, hard_scale_off=False):
         super().__init__(alpha=alpha, l1_ratio=l1_ratio, regulization="l1", min_loss=min_loss, max_itr=max_itr, hard_scale_off=hard_scale_off)
-    
+        self._model = "Lasso"
+
     def fit(self, X, y, scale=True,):
 
         """
@@ -111,7 +112,8 @@ class Ridge(BaseEstimatorRegulization):
 
     def __init__(self, alpha=0.1, l1_ratio=0.5, min_loss=0.1, max_itr=3000, hard_scale_off=False):
         super().__init__(alpha=alpha, l1_ratio=l1_ratio, regulization="l2", min_loss=min_loss, max_itr=max_itr, hard_scale_off=hard_scale_off)
-    
+        self._model = "Ridge"
+
     def fit(self, X, y, scale=True,):
 
         """
@@ -165,6 +167,7 @@ class ElasticNet(BaseEstimatorRegulization):
 
     def __init__(self, alpha=0.1, l1_ratio=0.5, min_loss=0.1, max_itr=3000, hard_scale_off=False):
         super().__init__(alpha=alpha, l1_ratio=l1_ratio, regulization="elastic_net", min_loss=min_loss, max_itr=max_itr, hard_scale_off=hard_scale_off)
+        self._model = "ElasticNet"
     
     def fit(self, X, y, scale=True,):
 

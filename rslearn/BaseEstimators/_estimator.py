@@ -447,6 +447,7 @@ class BaseEstimatorRegulization:
         self.max_itr = max_itr
         self.hard_scale_off = hard_scale_off
         self.regulization = regulization
+        self._model = "regu_base"
 
         self.model = rslearn.linear_model.LinearRegression(regulization=regulization, alpha=self.alpha, l1_ratio=self.l1_ratio, min_loss=self.min_loss, max_itr=self.max_itr, hard_scale_off=hard_scale_off)
     

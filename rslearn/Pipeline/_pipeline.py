@@ -30,16 +30,12 @@ Features
 
 import numpy as np 
 from rslearn.model_selection import train_test_split
-from rslearn.metrics import (accuracy_score,
-                            f1_score, 
-                            recall, 
-                            precision,
-                            r2_score, 
-                            mse,
-                            rmse,
-                            mae
-                            )
+from rslearn.Errors import *
 from pprint import pprint
+import rslearn
+import json
+import gzip
+import warnings
 
 class pipeline:
     def __init__(self, params={}, validation_split=False, split_params={"test_size": 0.25, "random_state": 67, "stratify": None},):
@@ -164,12 +160,13 @@ class pipeline:
         >>>     line.fit(X=X, y=y)
         """
         if len(params) == 0:
-            raise ValueError("Empty Parameter For Pipeline")
+            raise InvalidValueError("Empty Parameter For Pipeline")
 
         if "model" not in params:
-            raise ValueError("No Model Selected in Parameters")
+            raise InvalidValueError("No Model Selected in Parameters")
         
         self.Model = params['model']
+        self.Model.hard_scale_off = True
         self.scaling = False
         if "scaler" in params:
             self.Scaler = params['scaler']
@@ -180,7 +177,7 @@ class pipeline:
 
         self.split = validation_split
     
-    def _helper(self, X, y, split_params, split):
+    def _helper(self, X, y, split):
         if split is False:
             return np.asarray(X, dtype=float), '_' , np.asarray(y, dtype=float), '_'
         
@@ -188,7 +185,12 @@ class pipeline:
 
         return X_train, X_test, y_train, y_test
         
-
+    def __scaler_helper(self, X, scaled=False):
+        if scaled:
+            return self.Scaler.transform(X)
+        else:
+            X = self.Scaler.fit_transform(X)
+            return X
         
     def fit(self,
             X=None,
@@ -211,23 +213,26 @@ class pipeline:
             None
             """
             if X is None or y is None:
-                raise AttributeError("""Invalid Attribute `X` or `y`
+                raise InvalidValueError("""Invalid Attribute `X` or `y`
                                      Note: Check X or y not to be None""")
             
+            if self.scaling:
+                X = self.__scaler_helper(X, scaled=False)
+
             
-            X_train, X_test, y_train, y_test = self._helper(X=X, y=y, split_params=self.split_params, split=self.split)
+            X_train, X_test, y_train, y_test = self._helper(X=X, y=y, split=self.split)
             
             y_train = y_train.reshape(-1)
 
             if self.split:
                 y_test = y_test.reshape(-1)
 
-            self.Model.fit(X_train, y_train, scale=self.scaling)
+            self.Model.fit(X_train, y_train)
             self.trained=True
 
             if self.split:
-                y_pred = self.Model.predict(X_test)
-                output = self.analysis(y_pred=y_pred, y_true=y_test)
+                y_pred = self.predict(X_test)
+                output = self.evaluate(y_pred=y_pred, y_true=y_test)
 
                 if verbose is False:
                     return output, X_test
@@ -262,17 +267,17 @@ class pipeline:
         `np.array` of predictions
         """
         if new_data is None:
-                raise AttributeError("""Invalid Attribute `new_data`
+                raise InvalidValueError("""Invalid Attribute `new_data`
                                      Note: Check `new_data` not to be None""")
 
         if len(new_data) == 0:
-            raise ValueError("Got Empty Metrics!")
+            raise LengthError("Got Empty Metrics!")
         
         if self.trained is False:
-            raise ValueError("Model Has Not Been Fitted yet!")
+            raise NotFittedError("Model Has Not Been Fitted yet!")
 
         if self.scaling:
-            new_data = self.Scaler.transform(new_data)
+            new_data = self.__scaler_helper(new_data, scaled=True)
                 
                 
         pred = self.Model.predict(new_data)
@@ -299,11 +304,70 @@ class pipeline:
         """
 
         if not self.trained:
-            raise RuntimeError(
+            raise NotFittedError(
                 "This model is not trained yet. Call 'fit()' before using 'evaluate()'."
             )
 
-        return self.Model.evaluate(X=X, y_pred=y_pred, y_true=y_true)
+        if y_true is None:
+            raise InvalidValueError("`y_true` is Given None.")
+
+        if y_pred is None:
+            if X is None:
+                raise InvalidValueError("`y_pred` & `X` Both are Given None.")
+            y_pred = self.predict(X)
+
+        return self.Model.evaluate(y_pred=y_pred, y_true=y_true)
+        
+
+    def save(self, file_name="rslearn_pipeline.prsl"):
+        if not(self.trained):
+            raise NotFittedError("Pipeline has not been fitted yet.")
+
+        if not(file_name.endswith(".prsl")):
+            raise Error("Pipeline Supports `.prsl` format.")
+        
+        file_id = np.random.randint(0, 1000000)
+        actual_model = self.Model._model
+        self.Model._model = f"pipeline_{self.Model._model}_{file_id}"
+        self.Model.save(f"{self.Model._model}.rsl")
+        pipeline_data = {
+            "pipeline" : True,
+            "version" : rslearn.__version__,
+            "rslearn_compressed" : True,
+            "Model" : actual_model,
+            "model_id" : file_id,
+            "scaling" : self.scaling,
+            "scaler": self.Scaler.name,
+        }
+
+        if pipeline_data["scaler"] == "MinMaxScaler":
+            pipeline_data["MinMaxScaler"] = {
+                "min": self.Scaler.min_v.tolist(),
+                "max" : self.Scaler.max_v.tolist(),
+                "a" : self.Scaler.a,
+                "b" : self.Scaler.b
+            }
+        else: # StandardScaler case
+            pipeline_data["StandardScaler"] = {
+                "mean" : self.Scaler.mean.tolist(),
+                "std" : self.Scaler.std.tolist()
+            }
+
+
+        print(pipeline_data)
+
+        file_n = file_name.replace(".prsl", "")
+        file_n = f"{file_n}_{file_id}.prsl"
+
+        json_bytes = json.dumps(pipeline_data).encode("utf-8")
+
+        compressed = gzip.compress(json_bytes)
+
+        with open(file_n, "wb") as f:
+            f.write(compressed)
+
+        warnings.warn("Do not Change or Edit Model's file name.")
+        return f"Pipeline & Model Saved Successfully with {file_n} & {self.Model._model}.rsl"
 
 
 

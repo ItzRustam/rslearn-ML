@@ -70,9 +70,11 @@ class MinMaxScaler:
     """
 
     def __init__(self, feature_range=(0, 1)):
-        self.min_v = None
-        self.max_v = None
+        self.min_v = np.array([0])
+        self.max_v = np.array([0])
         self.a, self.b = feature_range
+        self.name = "MinMaxScaler"
+        self._fitted = False
 
     def fit(self, X):
         """
@@ -97,6 +99,7 @@ class MinMaxScaler:
 
         self.min_v = np.min(X, axis=0)
         self.max_v = np.max(X, axis=0)
+        self._fitted = True
 
     def transform(self, X):
         """
@@ -112,6 +115,9 @@ class MinMaxScaler:
         np.ndarray
             Scaled data with zero mean and unit variance.
         """
+
+        if not(self._fitted):
+            raise NotFittedError("The scaler has not been fitted yet.")
 
         X = np.array(X)
         is_1d = False
@@ -212,6 +218,7 @@ class StandardScaler:
         self.mean = np.array([0])
         self.std = np.array([0])
         self._fitted = False
+        self.name = "StandardScaler"
 
     def fit(self, data: np.ndarray) -> None:
         """
