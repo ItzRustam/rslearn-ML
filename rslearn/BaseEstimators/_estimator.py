@@ -178,11 +178,12 @@ class BaseEstimator(ABC):
         """
         return (self.weights, self.bias)
     
-    def __save_regressor_model(self, file_name : str = "rslearn_model.rslr"):
+    def __save_regressor_model(self, file_name : str = "rslearn_model.rslr", regulization=None, min_loss=0.1, alpha=0.1, l1_ratio=0.5):
         model_data = {
             "model": self._model,
             "version": self._lib_version,
             "rslearn_compressed": True,
+            "task" : "regression",
             "primary scaled": self.flag,
             "weights": self.weights.tolist(),
             "bias": float(self.bias),
@@ -198,6 +199,15 @@ class BaseEstimator(ABC):
                     "scaler_name": "BackupScaler",
                     "max": float(self.backup_scaler.maxx)
                 }
+            },
+            # For Retrainable format
+            "params":{
+                "regulization" : regulization,
+                "min_loss" : min_loss,
+                "alpha" : float(alpha[0]),
+                "l1_ratio":l1_ratio,
+                "lr" : self.lr,
+                "max_itr" : self.max_itr
             }
         }
 
@@ -223,11 +233,12 @@ class BaseEstimator(ABC):
                     'bias' : float(model.bias)
                 }
                 catog_models_[f'model_{count}'] = weight_bias
-        print(catog_models_)
+                
         model_data = {
             "model": self._model,
             "version": self._lib_version,
             "rslearn_compressed": True,
+            "task" : "classification",
             "primary scaled": self.flag,
             "solver" : solver,
             "solver_options":{
@@ -252,6 +263,12 @@ class BaseEstimator(ABC):
                     "scaler_name": "BackupScaler",
                     "max": float(self.backup_scaler.maxx)
                 }
+            },
+
+            "params":{
+                "lr" : self.lr,
+                "max_itr" : self.max_itr,
+
             }
         }
 
@@ -265,14 +282,14 @@ class BaseEstimator(ABC):
         return f"Model Saved Successfully with {file_name}"
     
 
-    def save(self, file_name : str = "rslearn_model.rsl", solver="liblinear", catogirical_models=[]):
+    def save(self, file_name : str = "rslearn_model.rsl", solver="liblinear", catogirical_models=[], regulization=None, min_loss=0.1, alpha=0.1, l1_ratio=0.5):
         if not(self._fitted):
             raise NotFittedError("Model has not been fitted yet, use `fit()`")
         if not(file_name.endswith(".rsl")):
             raise Error("Only `.rsl` format are supported")
         
         if self._model == "LinearRegression":
-            self.__save_regressor_model(file_name=f"{file_name}r")
+            self.__save_regressor_model(file_name=f"{file_name}r", regulization=regulization, min_loss=min_loss, alpha=alpha, l1_ratio=l1_ratio)
         elif self._model == "LogisticRegression":
             self.__save_classification_model(file_name=f"{file_name}c", solver=solver, catogirical_models=catogirical_models)
         else:

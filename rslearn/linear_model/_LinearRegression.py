@@ -121,6 +121,9 @@ class LinearRegression(BaseEstimator):
         self._model = "LinearRegression"
         self.type = "regression"
         self.hard_scale_off = hard_scale_off
+        self.regulization = regulization
+        self.alpha = alpha,
+        self.l1_ratio = l1_ratio
     
 
 
@@ -157,7 +160,7 @@ class LinearRegression(BaseEstimator):
         it adjusts the loss function accordingly.
         """
 
-
+        self.flag = False # Validation to Be False
         X, y = _base.convert_array(arr1=X_arr, arr2=y_arr) # Converting to np.array
         y = y.reshape(-1)
 
@@ -174,6 +177,7 @@ class LinearRegression(BaseEstimator):
             self.flag = True
         else:
             X = self._scale_False(X, scaled=False)
+            self.flag = False # retrain case.
         
 
         
@@ -274,7 +278,7 @@ class LinearRegression(BaseEstimator):
         return super()._eval(X=X, y_pred=y_pred, y_true=y_true)
         
     def save(self, file_name="rslearn_model.rsl"):
-        super().save(file_name=file_name)
+        super().save(file_name=file_name, regulization=self.regulization, min_loss=self.min_loss, alpha=self.alpha, l1_ratio=self.l1_ratio)
     
 
 

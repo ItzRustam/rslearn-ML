@@ -130,7 +130,7 @@ class LogisticRegression(BaseEstimator):
         -------
         None
         """
-
+        self.flag = False # Validation to be False.
         X = np.asarray(X)
         y = np.asarray(y)
         y = y.reshape(-1)
@@ -147,7 +147,7 @@ class LogisticRegression(BaseEstimator):
             self.flag = True
         else:
             X = self._scale_False(X, scaled=False) # Gradient Stability
-
+            self.flag = False
         self.fitted_shape=X.shape
 
 
