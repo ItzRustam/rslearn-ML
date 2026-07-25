@@ -224,6 +224,7 @@ from rslearn.linear_model import LinearRegression
 import numpy as np
 
 print(rslearn.__version__)
+print(rslearn.__github_version__)
 X = np.array([10, 20, 30])
 y = np.array([5, 10, 15])
 
