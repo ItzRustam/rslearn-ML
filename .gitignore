@@ -8,7 +8,7 @@
 
 
 *.pyc
-tests/
+# tests/ - revealed test cases
 dist/*
 rslearn_ml.egg-info/*
 .vscode/*
@@ -27,8 +27,21 @@ testing.py
 !.env.example
 
 
-# temps
+# temps - usefull while Testing
 knnC.py
 knnR.py
 
 .continue/
+
+# PR Tasks
+tasks.txt
+
+# Project prefix
+# Old - .rsl
+*.rsl
+# for LogisticRegression - .rslc
+*.rslc
+# For LinearRegression - .rslr
+*.rslr
+# For Pipeline - .prsl
+*.prsl

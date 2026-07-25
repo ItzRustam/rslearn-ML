@@ -12,7 +12,8 @@
 #
 # See the LICENSE file for more details.
 
-from rslearn.linear_model import LinearRegression
+# from rslearn.linear_model import LinearRegression
+from rslearn.BaseEstimators import BaseEstimatorRegulization
 
 """
 This File Contains regulizing algorithams to avoid overfitting though the model  
@@ -24,7 +25,7 @@ Algorithams Contains
 - `ElasticNet`
 """
 
-class Lasso:
+class Lasso(BaseEstimatorRegulization):
 
     """
     Lasso l1 regulization for Avoid Overfitting though abs()  
@@ -53,14 +54,11 @@ class Lasso:
 
     """
 
-    def __init__(self, alpha=0.1, l1_score=0.5):
-        self.alpha = alpha
-        self.l1_score = l1_score
-        self.weights, self.bias = None
-        self.model = None
-        self.type = "regression"
-    
-    def fit(self, X, y, scale=True, min_loss : float = 0.1):
+    def __init__(self, alpha=0.1, l1_ratio=0.5, min_loss=0.1, max_itr=3000, hard_scale_off=False):
+        super().__init__(alpha=alpha, l1_ratio=l1_ratio, regulization="l1", min_loss=min_loss, max_itr=max_itr, hard_scale_off=hard_scale_off)
+        self._model = "Lasso"
+
+    def fit(self, X, y, scale=True,):
 
         """
         `fit()` Function For `Lasso` to Train The Model  
@@ -80,25 +78,10 @@ class Lasso:
         None
         """
 
-        model = LinearRegression(regulization="l1", alpha=self.alpha, l1_ratio=self.l1_score)
-        
-        model.fit(X, y, scale=scale, verbose=False, min_loss=min_loss)
-
-        self.weights, self.bias = model.get_weight_bias()
-        self.model = model
-    
-    def predict(self, X_new):
-        prediction = self.model.predict(X_new)
-        return prediction
-    
-    def get_weight_bias(self):
-        return (self.weights, self.bias)
-
-    def evaluate(self, X=None, y_pred=None, y_true=None):
-        return self.model.evaluate(X=X, y_pred=y_pred, y_true=y_true)
+        super().fit(X=X, y=y, scale=scale)
 
 
-class Ridge:
+class Ridge(BaseEstimatorRegulization):
     """
     Ridge `l2` regulization for Avoid Overfitting though square()
     NOTE: It uses LinearRegression Internly So make Sure to Scale youre Data and enter False in Scale Parameter in `fit()`  
@@ -127,16 +110,14 @@ class Ridge:
     """
     
 
-    def __init__(self, alpha=0.1, l1_score=0.5):
-        self.alpha = alpha
-        self.l1_score = l1_score
-        self.weights, self.bias = None
-        self.model = None
-        self.type = "regression" # Flags for pipeline Analysis
-    
-    def fit(self, X, y, scale=True, min_loss : float = 0.1):
+    def __init__(self, alpha=0.1, l1_ratio=0.5, min_loss=0.1, max_itr=3000, hard_scale_off=False):
+        super().__init__(alpha=alpha, l1_ratio=l1_ratio, regulization="l2", min_loss=min_loss, max_itr=max_itr, hard_scale_off=hard_scale_off)
+        self._model = "Ridge"
+
+    def fit(self, X, y, scale=True,):
+
         """
-        `fit()` Function For `Ridge` to Train The Model  
+        `fit()` Function For `Lasso` to Train The Model  
 
         Parameters
         ----------
@@ -153,27 +134,9 @@ class Ridge:
         None
         """
 
+        super().fit(X=X, y=y, scale=scale)
 
-        model = LinearRegression(regulization="l2", alpha=self.alpha, l1_ratio=self.l1_score)
-
-
-        
-        model.fit(X, y, scale=scale, verbose=False, min_loss=min_loss)
-
-        self.weights, self.bias = model.get_weight_bias()
-        self.model = model
-    
-    def predict(self, X_new):
-        prediction = self.model.predict(X_new)
-        return prediction
-    
-    def get_weight_bias(self):
-        return (self.weights, self.bias)
-    
-    def evaluate(self, X=None, y_pred=None, y_true=None):
-        return self.model.evaluate(X=X, y_pred=y_pred, y_true=y_true)
-
-class ElasticNet:
+class ElasticNet(BaseEstimatorRegulization):
     """
     `ElasticNet` regulization for Avoid Overfitting by Combination of `l1`, `l2`  
     NOTE: It uses LinearRegression Internly So make Sure to Scale youre Data and enter False in Scale Parameter in `fit()`  
@@ -202,16 +165,14 @@ class ElasticNet:
     """
 
 
-    def __init__(self, alpha=0.1, l1_score=0.5):
-        self.alpha = alpha
-        self.l1_score = l1_score
-        self.weights, self.bias = None
-        self.model = None
-        self.type = "regression"
+    def __init__(self, alpha=0.1, l1_ratio=0.5, min_loss=0.1, max_itr=3000, hard_scale_off=False):
+        super().__init__(alpha=alpha, l1_ratio=l1_ratio, regulization="elastic_net", min_loss=min_loss, max_itr=max_itr, hard_scale_off=hard_scale_off)
+        self._model = "ElasticNet"
     
-    def fit(self, X, y, scale=True, min_loss : float = 0.1):
+    def fit(self, X, y, scale=True,):
+
         """
-        `fit()` Function For `ElasticNet` to Train The Model  
+        `fit()` Function For `Lasso` to Train The Model  
 
         Parameters
         ----------
@@ -228,20 +189,5 @@ class ElasticNet:
         None
         """
 
-
-        model = LinearRegression(regulization="elastic_net", alpha=self.alpha, l1_ratio=self.l1_score)
-        
-        model.fit(X, y, scale=scale, verbose=False, min_loss=min_loss)
-
-        self.weights, self.bias = model.get_weight_bias()
-        self.model = model
+        super().fit(X=X, y=y, scale=scale)
     
-    def predict(self, X_new):
-        prediction = self.model.predict(X_new)
-        return prediction
-    
-    def get_weight_bias(self):
-        return (self.weights, self.bias)
-    
-    def evaluate(self, X=None, y_pred=None, y_true=None):
-        return self.model.evaluate(X=X, y_pred=y_pred, y_true=y_true)

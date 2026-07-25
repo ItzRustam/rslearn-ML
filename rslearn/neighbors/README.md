@@ -178,11 +178,11 @@ print("Evaluation metrics:", evaluation)
 ### For Regression
 ```python
 from rslearn.neighbors import KNNRegressor
-from sklearn.datasets import load_boston
+from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
 
 # Load Boston housing dataset
-data = load_boston()
+data = fetch_california_housing()
 X = data.data
 y = data.target
 

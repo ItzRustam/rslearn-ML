@@ -13,20 +13,21 @@
 # See the LICENSE file for more details.
 
 import numpy as np
+from rslearn.Errors import *
 
 def EuclidienDisctance(dataset : np.array = None, key : np.array = None):
     
     if dataset is None:
-        raise ValueError("dataset is not given.")
+        raise InvalidValueError("dataset is not given.")
     if key is None:
-        raise ValueError("No Key given to Found.")
+        raise InvalidValueError("No Key given to Found.")
     
     dataset = np.asarray(dataset)
     key = np.asarray(key)
 
     
     if dataset.shape[1] != key.shape[0]:
-        raise ValueError(f"Shape Mismatch {(dataset.shape, key.shape)}")
+        raise InvalidValueError(f"Shape Mismatch {(dataset.shape, key.shape)}")
     
     
     distances = np.linalg.norm(dataset - key, axis=1)

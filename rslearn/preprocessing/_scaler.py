@@ -36,6 +36,7 @@ Example
 """
 
 import numpy as np
+from rslearn.Errors import *
 
 class MinMaxScaler:
 
@@ -69,9 +70,11 @@ class MinMaxScaler:
     """
 
     def __init__(self, feature_range=(0, 1)):
-        self.min_v = None
-        self.max_v = None
+        self.min_v = np.array([0])
+        self.max_v = np.array([0])
         self.a, self.b = feature_range
+        self.name = "MinMaxScaler"
+        self._fitted = False
 
     def fit(self, X):
         """
@@ -96,6 +99,7 @@ class MinMaxScaler:
 
         self.min_v = np.min(X, axis=0)
         self.max_v = np.max(X, axis=0)
+        self._fitted = True
 
     def transform(self, X):
         """
@@ -111,6 +115,9 @@ class MinMaxScaler:
         np.ndarray
             Scaled data with zero mean and unit variance.
         """
+
+        if not(self._fitted):
+            raise NotFittedError("The scaler has not been fitted yet.")
 
         X = np.array(X)
         is_1d = False
@@ -208,8 +215,10 @@ class StandardScaler:
         >>> X_Scaled = Scaler.fit(np.array([10, 20, 30])) # List Also works, np.array prefered
         >>> X_original = Scaler.inverse_transform(X_Scaled)
         """
-        self.mean = None
-        self.std = None
+        self.mean = np.array([0])
+        self.std = np.array([0])
+        self._fitted = False
+        self.name = "StandardScaler"
 
     def fit(self, data: np.ndarray) -> None:
         """
@@ -233,6 +242,7 @@ class StandardScaler:
         self.mean = np.mean(X, axis=0)
         self.std = np.std(X, axis=0)
         self.std = np.where(self.std == 0, 1, self.std)
+        self._fitted = True
 
 
     def transform(self, data: np.ndarray) -> np.ndarray:
@@ -250,8 +260,8 @@ class StandardScaler:
             Scaled data with zero mean and unit variance.
         """
 
-        if self.std is None:
-            raise ValueError("Scaler has not been fitted yet.")
+        if not(self._fitted):
+            raise NotFittedError("Scaler has not been fitted yet.")
 
         X = np.array(data)
         is_1D = False

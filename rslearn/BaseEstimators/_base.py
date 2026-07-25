@@ -14,8 +14,8 @@
 
 import numpy as np
 from numpy import dtype
-from rslearn.Errors import NotFittedError
-from rslearn.BaseEstimators._base import backupScaler
+from rslearn.Errors import *
+
 
 """For metrics/* for Multi-output Support"""
 def check_multioutput(parameter) -> None:
@@ -26,34 +26,12 @@ def check_multioutput(parameter) -> None:
     }
 
     if parameter not in valid_params:
-        raise ValueError(
+        raise InvalidValueError(
             f"Got Invalid Parameter, {parameter}. But supported {valid_params} only."
         )
 
     return
 
-"""Secodary Scaler"""
-class backupScaler:
-    def __init__(self, epsilon=1e-9):
-        self.__max = 0
-        self.__epsilon = epsilon
-        self.__fitted = False
-    
-    def fit(self, X):
-        self.__max = np.max(X)
-        self.__fitted = True
-    
-    def transform(self, X):
-        if self.__fitted:
-            new_X = X/(self.__max + self.__fitted) # avoid devisible by 0
-            return new_X
-        else:
-            raise NotFittedError("Scaler has not been fitted yet.")
-    
-    def fit_transform(self, X):
-        self.fit(X=X) # Fitting
-        scaled = self.transform(X=X)
-        return scaled
 
     
 
@@ -131,12 +109,12 @@ def shape_checker(arr1, arr2, output_mode=True):
     """
     if output_mode:
         if arr1.shape != arr2.shape:
-            raise ValueError(f"Shape mismatch: {arr1.shape} vs {arr2.shape}")
+            raise InvalidShape(f"Shape mismatch: {arr1.shape} vs {arr2.shape}")
 
     # if arr1, arr2 are Coming from Regression X, y
 
     if len(arr1) != len(arr2):  # Assume as X, y
-        raise ValueError(f"Shape mismatch: {len(arr1)} vs {len(arr2)}")
+        raise InvalidShape(f"Shape mismatch: {len(arr1)} vs {len(arr2)}")
 
 """Dimensional Matcher For Only Metrics"""
 def dim_validator(arr1):
@@ -166,12 +144,12 @@ def multi_output_selector(multi_output_param, scores, weights):
 
         case "weighted":
             if weights is None:
-                raise ValueError("weights must be provided for weighted averaging")
+                raise InvalidValueError("weights must be provided for weighted averaging")
 
             weights = np.asarray(weights, dtype=float)
 
             if weights.shape[0] != len(scores):
-                raise ValueError("weights length must match number of outputs")
+                raise InvalidValueError("weights length must match number of outputs")
 
             return np.average(scores, weights=weights)
 
