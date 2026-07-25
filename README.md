@@ -37,9 +37,11 @@ Origination - **<a href="https://github.com/rslearn-lib">rslearn-lib</a>**
 
 ## 
 
-### Latest (In Pipeline & linear_model): 
-* `KNN Regression & Classification Both`
-* `Evaluation & auto scaling support`
+### Latest (linear_model): 
+* `save() & load_model()`
+* `more control over scaling with hard_scale_off=True`
+* `custom extension .rslr, .rslc, .prsl`  
+**NOTE: Docs, doc strings & Parameter Info will be changed in feature info.**
 
 More Info: [CHANGELOG](CHANGELOG.md)  
 
@@ -56,6 +58,12 @@ More Info: [CHANGELOG](CHANGELOG.md)
 * Elastic Net (L1 + L2)
 
 ---
+### 📊 K-nearest Neighbors Models
+
+* KNNRegressor (Single & Multi-feature)
+* KNNClassifier (Binary & Multi-class)
+
+---
 
 ### 📏 Metrics
 
@@ -64,6 +72,7 @@ More Info: [CHANGELOG](CHANGELOG.md)
 * Root Mean Squared Error (RMSE)
 * R² Score
 * Accuracy (for classification)
+* Euclidian Distance (for KNN)
 
 ✔ Supports **single-output and multi-output** tasks
 
@@ -96,6 +105,7 @@ All models in **rslearn** are implemented using **Gradient Descent**.
   * `StandardScaler` (recommended)
   * or `MinMaxScaler`
 
+* or just use `scale=True` parameter while `fit()`
 ---
 
 
@@ -121,11 +131,18 @@ rslearn-ML/
 ├── rslearn/
 │   │
 │   ├── BaseEstimators/
-│   │   └── _base.py
+│   │   └── __init__.py  
+│   │   └── _base.py  
+│   │   └── _estimator.py  
 │   │
 │   ├── Errors/
 │   │   ├── __init__.py
-│   │   └── _errors.py
+│   │   └── _errors.py  
+│   │
+│   ├── loader/
+│   │   ├── __init__.py
+│   │   └── _pipeline_loader.py
+│   │   └── _model_loader.py  
 │   │
 │   ├── linear_model/
 │   │   ├── __init__.py
@@ -202,10 +219,12 @@ pip install -r requirements.txt
 ## 📌 Quick Example
 
 ```python
+import rslearn
 from rslearn.linear_model import LinearRegression
 from rslearn.preprocessing import StandardScaler
 import numpy as np
 
+print(rslearn.__version__)
 X = np.array([10, 20, 30])
 y = np.array([5, 10, 15])
 

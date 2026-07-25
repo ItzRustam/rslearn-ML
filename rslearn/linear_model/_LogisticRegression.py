@@ -201,7 +201,7 @@ class LogisticRegression(BaseEstimator):
         if self.hard_scale_off:
             pass
         # Scaling If Available when hard_scale_off is False
-        if self.flag:
+        elif self.flag:
             X = self._scale_True(X, scaled=True)
 
         # else Gradient Stability opration with X/max(X) + 1e-9

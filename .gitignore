@@ -8,7 +8,7 @@
 
 
 *.pyc
-tests/
+# tests/ - revealed test cases
 dist/*
 rslearn_ml.egg-info/*
 .vscode/*

@@ -28,6 +28,9 @@ Features
 
 """
 
+"""NOTE: No usable save() or load_pipeline() for this case."""
+"""TASK: Update save() and load_pipeline()"""
+
 import numpy as np 
 from rslearn.model_selection import train_test_split
 from rslearn.Errors import *
@@ -328,7 +331,7 @@ class pipeline:
         
         file_id = random.randint(0, 1000000)
         actual_model = self.Model._model
-        self.Model.model._model = f"pipeline_{self.Model._model}_{file_id}"
+        self.Model._model = f"pipeline_{self.Model._model}_{file_id}"
         self.Model.save(f"pipeline_{actual_model}.rsl")
         pipeline_data = {
             "pipeline" : True,
