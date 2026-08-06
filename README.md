@@ -8,6 +8,7 @@
 ![Contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 
 ---
+# Library's v1.0.4 haven't released yet on pypi so dont use given snippets for now. Docs are coming soon. 
 
 ## NOTE
 **This is Python version of this library visit more.**
