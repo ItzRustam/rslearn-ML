@@ -7,6 +7,14 @@
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 
+
+## 💖 Support rslearn-ML
+
+If you find this project helpful and want to support its development, please conside sponsoring! It helps me Develope more things.
+
+- [Sponsor on GitHub](https://github.com/sponsors/ItzRustam)
+- [Support on Ko-fi](https://ko-fi.com/itzrustam)
+
 ---
 
 ## ✨ Why rslearn?
